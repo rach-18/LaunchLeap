@@ -166,7 +166,7 @@ function ChannelCard() {
                 {/* Content Boxes */}
 
                 {/* Call to Action */}
-                <div className="bg-black p-6 rounded-lg text-center text-white">
+                <div className="bg-[#689F38] p-6 rounded-lg text-center text-white">
                     <p className="text-lg font-semibold mb-2">🚀 Ready to Supercharge Your AI Fitness App Growth?</p>
                     <p className="text-sm mb-4">Let our AI create tailored content for your community building strategy, highlighting your app's unique features.</p>
                     <button className="bg-white text-[#689F38] font-semibold py-2 px-6 rounded-full hover:bg-gray-100">
