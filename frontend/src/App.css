@@ -16,6 +16,10 @@ body {
     animation: float 5s ease-in-out infinite;
 }
 
+.playbook-card {
+    box-shadow: 0 0 10px 2px rgba(184, 255, 51, 0.5);
+}
+
 /* .growth {
     background: linear-gradient(
         rgba(255, 255, 255, 0.8), 
