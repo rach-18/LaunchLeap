@@ -11,9 +11,8 @@ function Home() {
             <Hero />
             <StartUpFail />
             <StartUpSucceed />
-            <Benefits />
-            <Features />
             <Growth />
+            <Features />
         </>
     )
 }
