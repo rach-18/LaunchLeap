@@ -1,4 +1,4 @@
-import Benefits from "./Benefits";
+import FAQ from "./FAQ";
 import Features from "./Features";
 import Growth from "./Growth";
 import Hero from "./Hero";
@@ -15,6 +15,7 @@ function Home() {
             <Growth />
             <Playbook />
             <Features />
+            <FAQ />
         </>
     )
 }
