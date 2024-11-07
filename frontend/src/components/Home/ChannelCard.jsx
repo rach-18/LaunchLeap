@@ -15,18 +15,18 @@ function ChannelCard() {
                 return (
                     <>
                         <div className="grid sm:grid-cols-3 grid-cols-1 gap-4 mb-6">
-                            <div className="bg-white p-4 rounded-lg shadow-lg">
+                            <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col sm:items-start items-center">
                                 <AttachMoneyOutlinedIcon className='text-[#689F38] mb-5' sx={{fontSize: 50}} />
                                 <p className="text-gray-500 text-sm">Estimated CAC</p>
                                 <p className="text-2xl font-semibold text-[#689F38]">$5</p>
                                 <p className="text-gray-400 text-xs">per customer</p>
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-lg">
+                            <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col sm:items-start items-center">
                                 <SignalCellularAltOutlinedIcon className='text-[#689F38] mb-5' sx={{fontSize: 50}} />
                                 <p className="text-gray-500 text-sm">Complexity</p>
                                 <p className="text-2xl font-semibold text-[#689F38]">Medium</p>
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-lg">
+                            <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col sm:items-start items-center">
                                 <AccessTimeOutlinedIcon className='text-[#689F38] mb-5' sx={{fontSize: 50}} />
                                 <p className="text-gray-500 text-sm">Time to Results</p>
                                 <p className="text-2xl font-semibold text-[#689F38]">60 days</p>
@@ -140,7 +140,7 @@ function ChannelCard() {
                 <div className="flex lg:flex-row flex-col lg:items-center items-start lg:gap-0 gap-2 space-x-2 mb-4">
                     <div className='flex gap-2'>
                         {/* <span className="text-yellow-500 text-2xl font-bold">⭐</span> */}
-                        <p className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">#1 Recommended Channel: Community Building</p>
+                        <h3 className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">#1 Recommended Channel: Community Building</h3>
                     </div>
                     <span className="ml-auto text-[#689F38] bg-[#DCFCE6] lg:text-sm text-xs font-semibold px-3 py-1 rounded-full">Top Pick</span>
                 </div>

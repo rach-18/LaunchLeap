@@ -11,7 +11,7 @@ function Navbar() {
                     <Link>ABOUT</Link>
                 </div> */}
                 <div>
-                    <p className="text-xl font-bold">AFTERBURN</p>
+                    <p className="text-xl font-bold">LaunchLeap</p>
                 </div>
                 <div className="flex gap-2 md:text-base text-sm">
                     {/* <button className="bg-[#B8FF33] text-black py-2 px-4 rounded-lg">LOGIN</button> */}

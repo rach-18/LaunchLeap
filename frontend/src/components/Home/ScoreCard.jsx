@@ -6,7 +6,7 @@ function ScoreCard() {
             <div className="playbook-card sm:w-5/6 w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
                 <div className="flex items-center space-x-2 mb-4">
                     <FingerprintOutlinedIcon sx={{fontSize: 34, color: '#689F38'}} />
-                    <p className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">Startup Idea Uniqueness Score</p>
+                    <h3 className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">Startup Idea Uniqueness Score</h3>
                 </div>
                 <div className="flex gap-5 items-center my-5">
                     <div className="flex-1 bg-gray-200 rounded-full h-2.5">
