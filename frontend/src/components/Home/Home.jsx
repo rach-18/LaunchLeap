@@ -1,3 +1,4 @@
+import Navbar from "../Navbar";
 import Brands from "./Brands";
 import FAQ from "./FAQ";
 import Features from "./Features";
@@ -10,6 +11,7 @@ import StartUpSucceed from "./StartUpSucceed";
 function Home() {
     return (
         <>
+            <Navbar />
             <Hero />
             <StartUpFail />
             <StartUpSucceed />

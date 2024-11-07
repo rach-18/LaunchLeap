@@ -14,7 +14,7 @@ function ChannelCard() {
             case 'Overview':
                 return (
                     <>
-                        <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="grid sm:grid-cols-3 grid-cols-1 gap-4 mb-6">
                             <div className="bg-white p-4 rounded-lg shadow-lg">
                                 <AttachMoneyOutlinedIcon className='text-[#689F38] mb-5' sx={{fontSize: 50}} />
                                 <p className="text-gray-500 text-sm">Estimated CAC</p>
@@ -38,11 +38,11 @@ function ChannelCard() {
                 return (
                     <>
                         <div className="bg-white p-4 rounded-lg shadow-lg">
-                            <div className='flex gap-2 items-center'>
+                            <div className='flex gap-2 sm:items-center items-start'>
                                 <LightbulbOutlinedIcon sx={{color: '#F1CC71'}} />
-                                <p className="text-black text-xl font-semibold">Why Community Building for Your AI Fitness App?</p>
+                                <p className="text-black sm:text-xl text-base font-semibold">Why Community Building for Your AI Fitness App?</p>
                             </div>
-                            <ul className='list-disc pl-5 leading-8'>
+                            <ul className='list-disc pl-5 space-y-4'>
                                 <li>Your target audience of fitness enthusiasts actively seeks motivation and advice online</li>
                                 <li>Community building allows you to showcase your AI's real-time form correction feature</li>
                                 <li>Users can share their personalized workout plans, driving interest in your unique offering</li>
@@ -57,12 +57,12 @@ function ChannelCard() {
                 return (
                     <>
                         <div className="bg-white p-4 rounded-lg shadow-lg">
-                            <div className='flex gap-2 items-center'>
+                            <div className='flex gap-2 sm:items-center items-start'>
                                 <PeopleAltOutlinedIcon sx={{color: '#F1CC71'}} />
-                                <p className="text-black text-xl font-semibold">Case Study: Fitbod</p>
+                                <p className="text-black sm:text-xl text-base font-semibold">Case Study: Fitbod</p>
                             </div>
                             <p className='mb-2 mt-1'>Fitbod successfully grew their fitness app through community building:</p>
-                            <ul className='list-disc pl-5 leading-8'>
+                            <ul className='list-disc pl-5 space-y-4'>
                                 <li>Created engaged communities on social media platforms</li>
                                 <li>Shared user success stories and workout tips</li>
                                 <li>Hosted Q&A sessions with fitness experts</li>
@@ -77,14 +77,14 @@ function ChannelCard() {
                 return (
                     <>
                         <div className="bg-white p-4 rounded-lg shadow-lg">
-                            <div className='flex gap-2 items-center mb-2'>
+                            <div className='flex gap-2 sm:items-center items-start'>
                                 <ArrowForwardOutlinedIcon sx={{color: '#F1CC71'}} />
-                                <p className="text-black text-xl font-semibold">Your AI Fitness App Action Plan</p>
+                                <p className="text-black sm:text-xl text-base font-semibold">Your AI Fitness App Action Plan</p>
                             </div>
-                            <ol className='list-decimal pl-5'>
+                            <ol className='list-decimal pl-5 space-y-2'>
                                 <li>
                                     <p className='font-semibold'>Setup (Week 1):</p>
-                                    <ul className='list-disc pl-5 leading-8'>
+                                    <ul className='list-disc sm:pl-5 space-y-4'>
                                         <li>Create a Facebook Page for your AI fitness app</li>
                                         <li>Set up a subreddit dedicated to your app</li>
                                         <li>Create accounts on Instagram and Twitter</li>
@@ -94,7 +94,7 @@ function ChannelCard() {
                                 </li>
                                 <li>
                                     <p className='font-semibold'>Content Creation (Ongoing):</p>
-                                    <ul className='list-disc pl-5 leading-8'>
+                                    <ul className='list-disc sm:pl-5 space-y-4'>
                                         <li>Daily: Post one AI-generated workout tip across all platforms</li>
                                         <li>Weekly: Create and share one in-depth blog post about a fitness topic, highlighting your AI's capabilities</li>
                                         <li>Bi-weekly: Produce a video showcasing your AI's form correction feature</li>
@@ -102,7 +102,7 @@ function ChannelCard() {
                                 </li>
                                 <li>
                                     <p className='font-semibold'>Community Engagement (Ongoing):</p>
-                                    <ul className='list-disc pl-5 leading-8'>
+                                    <ul className='list-disc sm:pl-5 space-y-4'>
                                         <li>Daily: Respond to all comments and messages across platforms within 24 hours</li>
                                         <li>Weekly: Host a "Form Check Friday" where users can submit videos for AI analysis</li>
                                         <li>Monthly: Organize an "Ask Me Anything" session about AI in fitness</li>
@@ -110,7 +110,7 @@ function ChannelCard() {
                                 </li>
                                 <li>
                                     <p className='font-semibold'>User-Generated Content (Ongoing):</p>
-                                    <ul className='list-disc pl-5 leading-8'>
+                                    <ul className='list-disc sm:pl-5 space-y-4'>
                                         <li>Weekly: Feature one user transformation story</li>
                                         <li>Bi-weekly: Share a user-created workout generated by your AI</li>
                                         <li>Monthly: Run a contest for the most creative use of your AI fitness app</li>
@@ -118,7 +118,7 @@ function ChannelCard() {
                                 </li>
                                 <li>
                                     <p className='font-semibold'>Performance Tracking (Ongoing):</p>
-                                    <ul className='list-disc pl-5 leading-8'>
+                                    <ul className='list-disc sm:pl-5 space-y-4'>
                                         <li>Weekly: Review engagement metrics across all platforms</li>
                                         <li>Monthly: Analyze user growth, retention, and conversion rates</li>
                                         <li>Quarterly: Conduct a community survey to gather feedback and ideas for new features</li>
@@ -135,16 +135,18 @@ function ChannelCard() {
 
     return (
         <>
-            <div className="playbook-card w-5/6 mx-auto py-4 px-6 rounded-lg mt-10">
+            <div className="playbook-card sm:w-5/6 w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
                 {/* Header */}
-                <div className="flex items-center space-x-2 mb-4">
-                    <span className="text-yellow-500 text-2xl font-bold">⭐</span>
-                    <p className="text-3xl font-semibold text-[#689F38]">#1 Recommended Channel: Community Building</p>
-                    <span className="ml-auto text-[#689F38] bg-[#DCFCE6] text-sm font-semibold px-3 py-1 rounded-full">Top Pick</span>
+                <div className="flex lg:flex-row flex-col lg:items-center items-start lg:gap-0 gap-2 space-x-2 mb-4">
+                    <div className='flex gap-2'>
+                        {/* <span className="text-yellow-500 text-2xl font-bold">⭐</span> */}
+                        <p className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">#1 Recommended Channel: Community Building</p>
+                    </div>
+                    <span className="ml-auto text-[#689F38] bg-[#DCFCE6] lg:text-sm text-xs font-semibold px-3 py-1 rounded-full">Top Pick</span>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-300 mb-4">
+                <div className="flex flex-wrap border-b border-gray-300 mb-4">
                     {['Overview', 'Why?', 'Case Study', 'Action Plan'].map((tab) => (
                         <button
                             key={tab}
@@ -169,7 +171,7 @@ function ChannelCard() {
                 <div className="bg-[#689F38] p-6 rounded-lg text-center text-white">
                     <p className="text-lg font-semibold mb-2">🚀 Ready to Supercharge Your AI Fitness App Growth?</p>
                     <p className="text-sm mb-4">Let our AI create tailored content for your community building strategy, highlighting your app's unique features.</p>
-                    <button className="bg-white text-[#689F38] font-semibold py-2 px-6 rounded-full hover:bg-gray-100">
+                    <button className="bg-white text-[#689F38] font-semibold py-2 px-6 sm:rounded-full rounded-lg hover:bg-gray-100">
                         Generate AI-Powered Fitness Content
                     </button>
                 </div>

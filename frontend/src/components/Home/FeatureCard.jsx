@@ -12,8 +12,8 @@ const iconMap = {
 
 function FeatureCard({icon, title, description}) {
     return (
-        <div className="col-span-12 sm:col-span-6 md:col-span-3 flex-shrink-0 w-[40%]  shadow-lg px-5 py-6 rounded-xl">
-            <div className="flex flex-row p-4">
+        <div className="col-span-12 sm:col-span-6 md:col-span-3 flex-shrink-0 lg:w-[40%] w-full shadow-lg sm:px-5 px-1 py-6 rounded-xl">
+            <div className="flex sm:flex-row flex-col sm:items-start items-center sm:gap-0 gap-2 p-4">
                 <div className="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-[#B8FF33] text-white">
                     {iconMap[icon]}
                 </div>

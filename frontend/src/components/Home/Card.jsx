@@ -22,7 +22,7 @@ function Card({icon, title, description, type}) {
                 <div
                     className={`absolute ${type === 'fail' ? 'bg-[#FF3960]/50' : 'bg-[#BEE477]/50'} top-0 left-0 w-24 h-1 z-30  transition-all duration-200   group-hover:bg-white group-hover:w-1/2`}>
                 </div>
-                <div className="py-2 px-9 relative  ">
+                <div className="py-2 sm:px-9 px-5 relative  ">
                     {iconMap[icon]}
                     <h3 className="mt-8 text-lg font-semibold text-black group-hover:text-white ">{title}</h3>
                     <p className="mt-4 text-base text-gray-600 group-hover:text-white  ">{description}</p>
