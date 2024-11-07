@@ -22,8 +22,9 @@ body {
 }
 
 .image-group {
-    width: clamp(10rem, 1rem + 40vmin, 30rem);
-    padding: calc(clamp(10rem, 1rem + 30vmin, 30rem) / 10);
+    width: 15rem;
+    height: 12rem;
+    padding: 1rem;
 }
 
 .marquee {
@@ -73,5 +74,13 @@ body {
 
     to {
         transform: translateX(-100%);
+    }
+}
+
+@media (max-width: 425px) {
+    .image-group {
+        width: 10rem;
+        height: 8rem;
+        padding: 1rem;
     }
 }
