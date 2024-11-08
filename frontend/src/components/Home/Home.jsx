@@ -7,6 +7,7 @@ import Hero from "./Hero";
 import Playbook from "./Playbook";
 import StartUpFail from "./StartUpFail";
 import StartUpSucceed from "./StartUpSucceed";
+import TractionTracker from "./TractionTracker";
 
 function Home() {
     return (
@@ -17,6 +18,7 @@ function Home() {
             <StartUpSucceed />
             <Growth />
             <Playbook />
+            <TractionTracker />
             <Features />
             <Brands />
             <FAQ />
