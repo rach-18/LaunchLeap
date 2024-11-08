@@ -10,7 +10,13 @@ body {
 }
 
 .hero, .signup {
-    background-image: url('./assets/Background.png');
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.9) 5%, rgba(255, 255, 255, 0.5) 10%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 0.9) 95%), /* Left to right gradient */
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 5%, rgba(255, 255, 255, 0.5) 10%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 0.9) 95%), /* Top to bottom gradient */
+        url('./assets/Background2.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .scroll-txt {

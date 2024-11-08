@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function Hero() {
     return (
         <>
-            <section className="hero bg-center bg-no-repeat">
+            <section className="hero">
                 <div className="px-4 mx-auto max-w-screen-xl text-center py-32 xl:py-56 text-[#1e1e1e] flex flex-col items-center">
                     <h1 className="mb-4 font-extrabold tracking-tight leading-none lg:text-5xl md:text-4xl text-3xl">Solopreneur? New to Marketing? <br /> Dont Break a Sweat.</h1>
                     <p className="mb-8 text-lg font-normal lg:text-xl sm:px-16 lg:px-48">Reach your exact customers - cheaply, easily, quickly.</p>
