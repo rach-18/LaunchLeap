@@ -32,7 +32,7 @@ function SignUp() {
 
     return (
         <>            
-            <div className="signup flex flex-col min-h-screen justify-evenly">
+            <div className="signup flex flex-col min-h-screen gap-20 pt-24">
                 <h1 className="text-5xl font-bold text-center text-[#1e1e1e]">LAUNCH LEAP</h1>
                 <div className="relative flex flex-col sm:px-0 px-5 justify-center items-center">
                     <div className="relative sm:max-w-sm w-full">
