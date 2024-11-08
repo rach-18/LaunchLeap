@@ -9,8 +9,8 @@ body {
     overflow-x: hidden;
 }
 
-.hero {
-    background-image: url('./assets/HeroBackground.jpeg');
+.hero, .signup {
+    background-image: url('./assets/Background.png');
 }
 
 .scroll-txt {

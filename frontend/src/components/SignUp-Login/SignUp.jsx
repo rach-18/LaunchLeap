@@ -38,23 +38,16 @@ function SignUp() {
     }
 
     return (
-        <>
-            {/* {successMessage && (
-                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white p-4 rounded shadow-lg z-50 w-1/3 flex flex-col items-center">
-                    <p className="text-xl">Signup was successful!</p>
-                    <Link to="/" className="text-white underline mt-2">Go back to Home Page</Link>
-                </div>
-            )} */}
-
-            
-            <div>
-                <div className="relative min-h-screen flex flex-col sm:px-0 px-5 justify-center items-center bg-gray-100 ">
+        <>            
+            <div className="signup bg-center bg-no-repeat flex flex-col min-h-screen justify-evenly">
+                <h1 className="text-5xl font-bold text-center text-[#1e1e1e]">LAUNCH LEAP</h1>
+                <div className="relative flex flex-col sm:px-0 px-5 justify-center items-center">
                     <div className="relative sm:max-w-sm w-full">
                         <div className="card bg-[#1e1e1e] shadow-lg w-full h-full rounded-3xl absolute transform -rotate-6"></div>
                         <div className="card bg-[#BEE477] shadow-lg w-full h-full rounded-3xl absolute transform rotate-6"></div>
                         <div className="relative w-full rounded-3xl px-6 py-4 bg-gray-100 shadow-md">
                             <label className="block mt-3 text-2xl text-gray-700 text-center font-semibold">
-                                LaunchLeap
+                                Sign Up for Early access
                             </label>
                             {
                                 successMessage === 'pending' ? (

@@ -12,7 +12,6 @@ function App() {
         <Route path='/' element={<Home />}></Route>
         <Route path='/signup' element={<SignUp />}></Route>
       </Routes>
-      <Footer />
     </BrowserRouter>
   )
 }

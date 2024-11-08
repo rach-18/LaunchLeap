@@ -1,4 +1,5 @@
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+import { Link } from 'react-router-dom';
 
 function Hero() {
     return (
@@ -14,7 +15,7 @@ function Hero() {
                         </div>
                     </div> */}
                     <div className="ms:flex items-center px-2 rounded-lg space-x-4 mx-auto">
-                        <button className="bg-[#1e1e1e] text-[#B8FF33] text-base rounded-lg px-4 py-2 font-thin">Sign Up for early Access</button>
+                        <Link to='/signup' className="bg-[#1e1e1e] text-[#B8FF33] text-base rounded-lg px-4 py-2 font-thin">Sign Up for early Access</Link>
                     </div>
                 </div>
             </section>

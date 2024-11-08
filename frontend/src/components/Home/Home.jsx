@@ -1,3 +1,4 @@
+import Footer from "../Footer";
 import Navbar from "../Navbar";
 import Brands from "./Brands";
 import FAQ from "./FAQ";
@@ -22,6 +23,7 @@ function Home() {
             <Features />
             <Brands />
             <FAQ />
+            <Footer />
         </>
     )
 }

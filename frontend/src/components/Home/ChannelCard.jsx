@@ -5,6 +5,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+import { Link } from 'react-router-dom';
 
 function ChannelCard() {
     const [activeTab, setActiveTab] = useState('Overview');
@@ -135,7 +136,7 @@ function ChannelCard() {
 
     return (
         <>
-            <div className="playbook-card sm:w-5/6 w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
+            <div className="playbook-card w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
                 {/* Header */}
                 <div className="flex lg:flex-row flex-col lg:items-center items-start lg:gap-0 gap-2 space-x-2 mb-4">
                     <div className='flex gap-2'>
@@ -171,9 +172,9 @@ function ChannelCard() {
                 <div className="bg-[#689F38] p-6 rounded-lg text-center text-white">
                     <p className="text-lg font-semibold mb-2">🚀 Ready to Supercharge Your AI Fitness App Growth?</p>
                     <p className="text-sm mb-4">Let our AI create tailored content for your community building strategy, highlighting your app's unique features.</p>
-                    <button className="bg-white text-[#689F38] font-semibold py-2 px-6 sm:rounded-full rounded-lg hover:bg-gray-100">
+                    <Link to='/signup' className="bg-white text-[#689F38] font-semibold py-2 px-6 sm:rounded-full rounded-lg hover:bg-gray-100">
                         Generate AI-Powered Fitness Content
-                    </button>
+                    </Link>
                 </div>
             </div>
         </>

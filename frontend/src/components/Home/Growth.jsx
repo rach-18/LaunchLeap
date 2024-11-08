@@ -31,7 +31,7 @@ function Growth() {
           {/* Step 2 */}
           <div className="flex sm:flex-row flex-col sm:items-start items-center sm:gap-0 gap-2 space-x-4">
             <div className="sm:hidden block flex items-center">
-              <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
+              {/* <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div> */}
               <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
                 2
               </div>
@@ -45,10 +45,12 @@ function Growth() {
                 Data-Backed Insights
               </span>
             </div>
-            <div className="sm:block hidden flex items-center">
-              <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
-              <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
-                2
+            <div className="sm:block hidden">
+              <div className="flex items-center">
+                <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
+                <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
+                  2
+                </div>
               </div>
             </div>
           </div>
@@ -75,7 +77,7 @@ function Growth() {
           {/* Step 4 */}
           <div className="flex sm:flex-row flex-col sm:items-start items-center sm:gap-0 gap-2 space-x-4">
             <div className="sm:hidden block flex items-center">
-              <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
+              {/* <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div> */}
               <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
                 4
               </div>
@@ -89,10 +91,12 @@ function Growth() {
                 Continuous Growth
               </span>
             </div>
-            <div className="sm:block hidden flex items-center">
-              <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
-              <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
-                4
+            <div className="sm:block hidden">
+              <div className="flex items-center">
+                <div className="sm:block hidden w-24 bg-green-200 h-0.5"></div>
+                <div className="w-10 h-10 bg-green-200 text-green-600 font-semibold rounded-full flex items-center justify-center text-lg">
+                  4
+                </div>
               </div>
             </div>
           </div>
