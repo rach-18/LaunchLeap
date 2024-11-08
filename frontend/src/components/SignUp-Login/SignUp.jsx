@@ -9,23 +9,16 @@ import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 function SignUp() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('pending');
 
     async function handleSignup(e) {
         e.preventDefault();
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            const user = auth.currentUser;
-            console.log(user);
-            // Uncomment if you want to save the user in Firestore
-            // if (user) {
-            //     await setDoc(doc(db, 'Users', user.uid), {
-            //         email: user.email,
-            //         name: name
-            //     });
-            // }
-            console.log('User is registered successfully!');
+            await setDoc(doc(db, 'Users', email), {
+                email: email,
+                name: name
+            });
+            console.log('User data saved successfully!');
             setSuccessMessage('success');  // Show success message
         } catch (err) {
             console.log(err);
@@ -70,7 +63,7 @@ function SignUp() {
                                             required
                                         />
                                     </div>
-                                    <div className="mt-7">                
+                                    {/* <div className="mt-7">                
                                         <input 
                                             type="password" 
                                             placeholder="Enter your password" 
@@ -78,7 +71,7 @@ function SignUp() {
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />                           
-                                    </div>
+                                    </div> */}
                                     <div className="mt-7">
                                         <button className="bg-black w-full py-3 rounded-xl text-[#BEE477] shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
                                             Sign Up
