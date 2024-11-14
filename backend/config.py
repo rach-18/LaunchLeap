@@ -5,7 +5,7 @@ import certifi
 try:
     # Use certifi for SSL certificate verification
     client = MongoClient(
-        "mongodb+srv://launchLeap2024:bNebkGLxDueBg6RZ@launchleapcluster.hvaqt.mongodb.net/?retryWrites=true&w=majority&appName=LaunchLeapCluster",
+        os.getenv("MONGODB_URI"),
         tls=True,
         tlsCAFile=certifi.where()
     )
