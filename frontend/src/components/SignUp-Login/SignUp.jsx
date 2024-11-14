@@ -1,28 +1,34 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { auth, db } from "../../firebase";
-import { setDoc, doc } from 'firebase/firestore';
 import { Link } from "react-router-dom";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
+import axios from "axios"
 
 function SignUp() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('pending');
 
     async function handleSignup(e) {
         e.preventDefault();
         try {
-            await setDoc(doc(db, 'Users', email), {
+            const response = await axios.post("http://localhost:5001/auth/signup", {
+                name: name,
                 email: email,
-                name: name
+                password: password
             });
-            console.log('User data saved successfully!');
-            setSuccessMessage('success');  // Show success message
-        } catch (err) {
-            console.log(err);
-            setSuccessMessage('fail');
+
+            console.log(response.data.message);
+        } catch (error) {
+            if(error.response) {
+                console.log(error.response.data.error);
+                setSuccessMessage('fail')
+            }
+            else {
+                console.log("An error occured: ", error.message);
+                setSuccessMessage("fail");
+            }
         }
     }
 
@@ -49,6 +55,7 @@ function SignUp() {
                                         <input 
                                             type="text" 
                                             placeholder="Enter your name" 
+                                            name="name"
                                             className="mt-1 px-2 block w-full border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0" 
                                             onChange={(e) => setName(e.target.value)}
                                             required
@@ -58,26 +65,28 @@ function SignUp() {
                                         <input 
                                             type="email" 
                                             placeholder="Enter your email" 
+                                            name="email"
                                             className="mt-1 px-2 block w-full border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0" 
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
                                         />
                                     </div>
-                                    {/* <div className="mt-7">                
+                                    <div className="mt-7">                
                                         <input 
                                             type="password" 
                                             placeholder="Enter your password" 
+                                            name="password"
                                             className="mt-1 px-2 block w-full border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0" 
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />                           
-                                    </div> */}
+                                    </div>
                                     <div className="mt-7">
                                         <button className="bg-black w-full py-3 rounded-xl text-[#BEE477] shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
                                             Sign Up
                                         </button>
                                     </div>
-                                    {/* <div className="flex mt-7 items-center text-center">
+                                    <div className="flex mt-7 items-center text-center">
                                         <hr className="border-gray-300 border-1 w-full rounded-md" />
                                         <label className="block font-medium text-sm text-gray-600 w-full">
                                             Or
@@ -88,7 +97,7 @@ function SignUp() {
                                         <button className="bg-red-500 border-none px-4 py-2 rounded-xl cursor-pointer text-white shadow-xl hover:shadow-inner transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
                                             Google
                                         </button>
-                                    </div> */}
+                                    </div>
                                 </form>
                                 ) : successMessage === 'success' ? (
                                     <div className="flex flex-col items-center mt-5 gap-2">
