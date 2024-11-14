@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import certifi
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 try:
     # Use certifi for SSL certificate verification
