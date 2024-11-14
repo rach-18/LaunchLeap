@@ -9,9 +9,16 @@ app = Flask(__name__)
 # else:
 #     CORS(app, resources={r"/auth/*": {"origins": "https://myfrontenddomain.com"}})
 
-app.register_blueprint(auth_bp, url_prefix="/auth")
+# app.register_blueprint(auth_bp, url_prefix="/auth")
 
-CORS(app, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
+# More permissive CORS configuration for debugging
+CORS(app,
+     origins=["http://localhost:5173", "https://launchleap.vercel.app"],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type"])
+
+app.register_blueprint(auth_bp, url_prefix="/auth")
 
 @app.route("/")
 def home():

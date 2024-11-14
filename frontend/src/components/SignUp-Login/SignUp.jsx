@@ -13,21 +13,34 @@ function SignUp() {
     async function handleSignup(e) {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5001/auth/signup", {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
                 name: name,
                 email: email,
                 password: password
+            }, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
-
+    
             console.log(response.data.message);
+            setSuccessMessage('success');  // Set success state if request succeeds
+            
         } catch (error) {
-            if(error.response) {
-                console.log(error.response.data.error);
-                setSuccessMessage('fail')
-            }
-            else {
-                console.log("An error occured: ", error.message);
-                setSuccessMessage("fail");
+            console.error("Full error:", error);
+            if (error.response) {
+                // Server responded with an error
+                console.error("Server error:", error.response.data.error);
+                setSuccessMessage('fail');
+            } else if (error.request) {
+                // Request was made but no response
+                console.error("Network error - no response");
+                setSuccessMessage('fail');
+            } else {
+                // Something else went wrong
+                console.error("Error:", error.message);
+                setSuccessMessage('fail');
             }
         }
     }
