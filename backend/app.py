@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # More permissive CORS configuration for debugging
 CORS(app,
-     origins=["http://localhost:5173", "https://launchleap.vercel.app"],
+     origins=["http://localhost:5173", "https://launchleap.vercel.app", "https://*.vercel.app"],
      supports_credentials=True,
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
      allow_headers=["Content-Type"])
