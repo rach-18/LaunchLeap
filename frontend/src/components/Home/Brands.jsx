@@ -93,7 +93,7 @@ function Brands() {
         <h2 className="text-center font-bold lg:text-5xl sm:text-4xl text-3xl text-[#1e1e1e]">
           Brands Thriving with Unconventional Marketing
         </h2>
-        <div className="marquee flex w-full select-none overflow-hidden mt-5">
+        <div className="marquee flex w-full select-none overflow-hidden mt-5 bg-white">
             <div className="marquee-group shrink-0 flex items-center gap-5 justify-around whitespace-nowrap">
                 {row1.map((el, index) => {
                     return (
@@ -123,7 +123,7 @@ function Brands() {
                 })}
             </div>    
         </div>
-        <div className="marquee flex w-full select-none overflow-hidden">
+        <div className="marquee flex w-full select-none overflow-hidden bg-white">
             <div className="marquee-group2 shrink-0 flex items-center gap-5 justify-around whitespace-nowrap">
                 {row2.map((el, index) => {
                     return (

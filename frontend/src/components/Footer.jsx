@@ -7,7 +7,7 @@ import EmailIcon from '@mui/icons-material/Email';
 function Footer() {
     return (
         <>
-            <footer className="bg-[#5E5E5E] text-white py-10">
+            <footer className="bg-[#5E5E5E] text-white py-10 relative z-10">
                 {/* <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
                     <div className="space-y-2">
                         <h3 className="font-semibold text-lg">Lorem ipsum</h3>

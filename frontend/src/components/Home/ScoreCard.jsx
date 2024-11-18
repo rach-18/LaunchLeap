@@ -3,7 +3,7 @@ import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
 function ScoreCard() {
     return (
         <>
-            <div className="playbook-card w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
+            <div className="playbook-card w-11/12 mx-auto py-4 px-6 rounded-lg mt-10 bg-white">
                 <div className="flex items-center space-x-2 mb-4">
                     <FingerprintOutlinedIcon sx={{fontSize: 34, color: '#689F38'}} />
                     <h3 className="lg:text-3xl sm:text-2xl text-xl font-semibold text-[#689F38]">Startup Idea Uniqueness Score</h3>

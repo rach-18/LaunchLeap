@@ -136,7 +136,7 @@ function ChannelCard() {
 
     return (
         <>
-            <div className="playbook-card w-11/12 mx-auto py-4 px-6 rounded-lg mt-10">
+            <div className="playbook-card w-11/12 mx-auto py-4 px-6 rounded-lg mt-10 bg-white">
                 {/* Header */}
                 <div className="flex lg:flex-row flex-col lg:items-center items-start lg:gap-0 gap-2 space-x-2 mb-4">
                     <div className='flex gap-2'>

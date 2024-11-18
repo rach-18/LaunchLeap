@@ -126,7 +126,7 @@ const TractionTracker = () => {
     return (
         <div className='mt-20 w-11/12 mx-auto'>
             <h2 className="text-center font-bold lg:text-5xl sm:text-4xl text-3xl text-[#1e1e1e]">Traction Tracker</h2>
-            <div className="p-6 rounded-lg shadow-lg w-11/12 mx-auto mt-5">
+            <div className="p-6 rounded-lg shadow-lg w-11/12 mx-auto mt-5 bg-white">
                 <div className='flex items-center justify-between bg-[#EFFDF4] p-4 rounded-lg mb-6'>
                     <div>
                         <span className="text-gray-600 font-semibold">Total Users: </span>

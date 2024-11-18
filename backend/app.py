@@ -3,10 +3,28 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 from flask_cors import CORS
 from auth.routes import auth_bp
+from flask_pymongo import PyMongo
+from datetime import datetime
 import os
 
+# Load environment variables first
 load_dotenv()
 
+# Initialize Flask app before other configurations
+app = Flask(__name__)
+app.config["MONGODB_URI"] = os.getenv("MONGODB_URI")
+app.config["MONGO_URI"] = os.getenv("MONGODB_URI")
+mongo = PyMongo(app)
+
+# Configure CORS
+CORS(app,
+     origins=["*"],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type"]
+)
+
+# Validate API key
 api_key = os.getenv("ANTHROPIC_API_KEY")
 if not api_key:
     raise ValueError("ANTHROPIC_API_KEY not found in environment variables!")
@@ -15,39 +33,25 @@ elif not api_key.startswith('sk-ant-'):
 else:
     print("API key loaded successfully:", api_key[:10] + "...")
 
-# if os.getenv("FLASK_ENV") == "development":
-#     CORS(app, resources={r"/auth/*": {"origins": "http://localhost:5173"}})
-# else:
-#     CORS(app, resources={r"/auth/*": {"origins": "https://myfrontenddomain.com"}})
-
-# app.register_blueprint(auth_bp, url_prefix="/auth")
-
-# Create the Anthropic client with explicit API key
+# Create Anthropic client
 client = Anthropic(
-    api_key=api_key.strip()  # Strip any whitespace
-)
-
-app = Flask(__name__)
-
-CORS(app,
-     origins=["*"],
-     supports_credentials=True,
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     allow_headers=["Content-Type"]
+    api_key=api_key.strip()
 )
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
+# Routes remain the same
 @app.route("/")
 def home():
     return "<h1>Hello world</h1>"
 
+# Route for Claude API
 @app.route("/api/claude", methods=["POST"])
 def query_claude():
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 400
+
     try:
-        # Print the API key being used (first few characters)
-        print(f"Using API key: {api_key[:10]}...")
-        
         data = request.json
         query = data.get("query")
         print("Received query:", query)
@@ -55,10 +59,9 @@ def query_claude():
         if not query:
             return jsonify({"error": "No query provided"}), 400
         
-        # Add more detailed error handling
         try:
             message = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-3-sonnet-20240229",  # Updated model name
                 max_tokens=1000,
                 temperature=0,
                 messages=[{"role": "user", "content": query}],
@@ -71,6 +74,37 @@ def query_claude():
     except Exception as e:
         print(f"General Error: {str(e)}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+# Route for saving responses
+@app.route("/api/responses", methods=["POST"])
+def save_responses():
+    try:
+        # Print request data and headers for debugging
+        print("Received request data:", request.get_json())
+        print("Request headers:", request.headers)
+
+        responses = request.json.get("responses")
+        
+        if not responses:
+            return jsonify({"error": "No responses provided"}), 400
+
+        # Create document to insert
+        document = {
+            "responses": responses,
+            "timestamp": datetime.now()
+        }
+
+        try:
+            mongo.db.responses.insert_one(document)
+        except Exception as e:
+            print(f"Error saving responses: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+
+        return jsonify({"message": "Responses saved successfully"}), 200
+    
+    except Exception as e:
+        print(f"Error saving responses: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
