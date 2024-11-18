@@ -57,6 +57,7 @@ function Question() {
                     type="text" 
                     name='query'
                     value={query}
+                    disabled={loading || response}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder='Type your answer here...' 
                     className='w-full max-w-3xl border-2 border-gray-200 rounded-lg p-4 
