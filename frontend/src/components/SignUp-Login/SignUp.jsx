@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import axios from "axios"
+import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 
 function SignUp() {
     const [name, setName] = useState('');
@@ -10,38 +12,83 @@ function SignUp() {
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('pending');
 
+    // async function handleSignup(e) {
+    //     e.preventDefault();
+    //     try {
+    //         const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+    //             name: name,
+    //             email: email,
+    //             password: password
+    //         }, {
+    //             withCredentials: true,
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         console.log(response.data.message);
+    //         setSuccessMessage('success');  // Set success state if request succeeds
+            
+    //     } catch (error) {
+    //         console.error("Full error:", error);
+    //         if (error.response) {
+    //             // Server responded with an error
+    //             console.error("Server error:", error.response.data.error);
+    //             setSuccessMessage('fail');
+    //         } else if (error.request) {
+    //             // Request was made but no response
+    //             console.error("Network error - no response");
+    //             setSuccessMessage('fail');
+    //         } else {
+    //             // Something else went wrong
+    //             console.error("Error:", error.message);
+    //             setSuccessMessage('fail');
+    //         }
+    //     }
+    // }
+
     async function handleSignup(e) {
         e.preventDefault();
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+            const auth = getAuth();
+            const db = getFirestore();
+            
+            // Create user with Firebase Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            
+            // Store additional user data in Firestore
+            await setDoc(doc(db, "users", userCredential.user.uid), {
                 name: name,
                 email: email,
-                password: password
-            }, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                createdAt: new Date().toISOString()
             });
-    
-            console.log(response.data.message);
-            setSuccessMessage('success');  // Set success state if request succeeds
+
+            setSuccessMessage('success');
             
         } catch (error) {
-            console.error("Full error:", error);
-            if (error.response) {
-                // Server responded with an error
-                console.error("Server error:", error.response.data.error);
-                setSuccessMessage('fail');
-            } else if (error.request) {
-                // Request was made but no response
-                console.error("Network error - no response");
-                setSuccessMessage('fail');
-            } else {
-                // Something else went wrong
-                console.error("Error:", error.message);
-                setSuccessMessage('fail');
-            }
+            console.error("Signup error:", error);
+            setSuccessMessage('fail');
+        }
+    }
+
+    async function handleGoogleSignup() {
+        try {
+            const auth = getAuth();
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            
+            // Store user data in Firestore
+            const db = getFirestore();
+            await setDoc(doc(db, "users", result.user.uid), {
+                name: result.user.displayName,
+                email: result.user.email,
+                createdAt: new Date().toISOString()
+            });
+
+            setSuccessMessage('success');
+        } catch (error) {
+            console.error("Google signup error:", error);
+            setSuccessMessage('fail');
         }
     }
 
@@ -107,7 +154,7 @@ function SignUp() {
                                         <hr className="border-gray-300 border-1 w-full rounded-md" />
                                     </div>
                                     <div className="flex mt-7 justify-center w-full">
-                                        <button className="bg-red-500 border-none px-4 py-2 rounded-xl cursor-pointer text-white shadow-xl hover:shadow-inner transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
+                                        <button onClick={handleGoogleSignup} className="bg-red-500 border-none px-4 py-2 rounded-xl cursor-pointer text-white shadow-xl hover:shadow-inner transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
                                             Google
                                         </button>
                                     </div>

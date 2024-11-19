@@ -5,26 +5,47 @@ import ResponseCard from './ResponseCard'
 import axios from 'axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { db } from '../../firebase'
+import { collection, addDoc } from 'firebase/firestore'
 
 function Responses() {
-    const { allResponses } = useAppContext()
+    const { allResponses, setAllResponses } = useAppContext()
     const [showModal, setShowModal] = useState(false)
     const [submitStatus, setSubmitStatus] = useState({success: false, message: ''})
 
-    const submitAllResponses = async () => {
-        // Debug log
-        console.log('Sending data:', { responses: allResponses });
+    // const submitAllResponses = async () => {
+    //     // Debug log
+    //     console.log('Sending data:', { responses: allResponses });
 
+    //     try {
+    //         await axios.post(`${import.meta.env.VITE_API_URL}/api/responses`, {
+    //             responses: allResponses
+    //         }, {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             withCredentials: true
+    //         })
+    //         setSubmitStatus({success: true, message: 'Responses saved successfully!'})
+    //     } catch (error) {
+    //         console.error('Error saving responses:', error)
+    //         setSubmitStatus({success: false, message: 'Error saving responses. Please try again.'})
+    //     }
+    //     setShowModal(true)
+    // }
+
+    const submitAllResponses = async () => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/responses`, {
-                responses: allResponses
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                withCredentials: true
-            })
-            setSubmitStatus({success: true, message: 'Responses saved successfully!'})
+            // Add responses to Firestore
+            const responsesCollectionRef = collection(db, "responses")
+            await addDoc(responsesCollectionRef, {
+                responses: allResponses,
+                timestamp: new Date(),
+                // Add any other metadata you want to store
+            });
+            
+            setSubmitStatus({success: true, message: 'Thank you for your responses!'})
+            setAllResponses([])
         } catch (error) {
             console.error('Error saving responses:', error)
             setSubmitStatus({success: false, message: 'Error saving responses. Please try again.'})
@@ -117,6 +138,7 @@ function Responses() {
                                             >
                                                 Sign Up
                                             </Link>
+                                            <Link to='/' className='text-gray-600 underline'>Not Now</Link>
                                         </div>
                                     ) : (
                                         <Link 
