@@ -18,7 +18,7 @@ mongo = PyMongo(app)
 
 # Configure CORS
 CORS(app,
-     origins=["https://launchleap.vercel.app", "http://localhost:5173", "https://launch-leap-cjr18pfax-rachita-pradhans-projects.vercel.app/"],
+     origins=["https://launchleap.vercel.app", "http://localhost:5173", "https://launch-leap-1ggb3myvw-rachita-pradhans-projects.vercel.app/"],
      supports_credentials=True,
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
      allow_headers=["Content-Type"]
