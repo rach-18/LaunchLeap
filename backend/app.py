@@ -17,12 +17,23 @@ app.config["MONGO_URI"] = os.getenv("MONGODB_URI")
 mongo = PyMongo(app)
 
 # Configure CORS
-CORS(app,
-     origins=["https://launchleap.vercel.app", "http://localhost:5173"],
-     supports_credentials=True,
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     allow_headers=["Content-Type"]
-)
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://launch-leap.vercel.app", "http://localhost:5173"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
+
+# Add CORS headers to all responses
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'https://launch-leap.vercel.app')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 # Validate API key
 api_key = os.getenv("ANTHROPIC_API_KEY")
