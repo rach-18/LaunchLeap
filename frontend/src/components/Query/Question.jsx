@@ -45,7 +45,7 @@ function Question() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                withCredentials: true
+                // withCredentials: true
             })
             setResponse(data.response)
             setAllResponses([...allResponses, {
