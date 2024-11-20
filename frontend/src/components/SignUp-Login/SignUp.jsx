@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import axios from "axios"
-import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+import CircularProgress from '@mui/material/CircularProgress';
 
 function SignUp() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('pending');
+    const [errorType, setErrorType] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // async function handleSignup(e) {
     //     e.preventDefault();
@@ -49,15 +53,24 @@ function SignUp() {
 
     async function handleSignup(e) {
         e.preventDefault();
+        setIsLoading(true);
         try {
-            const auth = getAuth();
-            const db = getFirestore();
+            // Check if the user already exists in Firestore
+            const usersRef = collection(db, "Users");
+            const q = query(usersRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                setSuccessMessage('fail');
+                setErrorType('userExists');
+                setIsLoading(false);
+                return;
+            }
             
-            // Create user with Firebase Authentication
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            // Generate a unique ID for the user (you can use any method you prefer)
+            const userId = Date.now().toString();
             
-            // Store additional user data in Firestore
-            await setDoc(doc(db, "users", userCredential.user.uid), {
+            // Store user data in Firestore
+            await setDoc(doc(db, "Users", userId), {
                 name: name,
                 email: email,
                 createdAt: new Date().toISOString()
@@ -69,6 +82,7 @@ function SignUp() {
             console.error("Signup error:", error);
             setSuccessMessage('fail');
         }
+        setIsLoading(false);
     }
 
     async function handleGoogleSignup() {
@@ -76,10 +90,19 @@ function SignUp() {
             const auth = getAuth();
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
-            
-            // Store user data in Firestore
-            const db = getFirestore();
-            await setDoc(doc(db, "users", result.user.uid), {
+
+            // Check if the user already exists in Firestore
+            const usersRef = collection(db, "Users");
+            const q = query(usersRef, where("email", "==", result.user.email));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                setSuccessMessage('fail');
+                setErrorType('userExists');
+                setIsLoading(false);
+                return;
+            }
+
+            await setDoc(doc(db, "Users", result.user.uid), {
                 name: result.user.displayName,
                 email: result.user.email,
                 createdAt: new Date().toISOString()
@@ -89,28 +112,37 @@ function SignUp() {
         } catch (error) {
             console.error("Google signup error:", error);
             setSuccessMessage('fail');
+            setErrorType('technical');
         }
+        setIsLoading(false);
     }
 
     function reset() {
         setSuccessMessage('pending');
+        setErrorType(null);
     }
 
     return (
         <>            
-            <div className="signup flex flex-col min-h-screen gap-20 pt-24">
+            <div className="signup flex flex-col min-h-screen gap-20 pt-20">
                 <h1 className="text-5xl font-bold text-center text-[#1e1e1e]">LAUNCH LEAP</h1>
                 <div className="relative flex flex-col sm:px-0 px-5 justify-center items-center">
                     <div className="relative sm:max-w-sm w-full">
                         <div className="card bg-[#1e1e1e] shadow-lg w-full h-full rounded-3xl absolute transform -rotate-6"></div>
                         <div className="card bg-[#BEE477] shadow-lg w-full h-full rounded-3xl absolute transform rotate-6"></div>
                         <div className="relative w-full rounded-3xl px-6 py-4 bg-gray-100 shadow-md">
-                            <label className="block mt-3 text-2xl text-gray-700 text-center font-semibold">
-                                Sign Up for Early access
-                            </label>
                             {
+                                isLoading ? (
+                                    <div className="flex flex-col items-center justify-center py-20">
+                                        <CircularProgress style={{ color: '#BEE477' }} />
+                                        <p className="mt-4 text-gray-600">Please wait...</p>
+                                    </div>
+                                ) :
                                 successMessage === 'pending' ? (
                                 <form onSubmit={handleSignup} className="mt-10">
+                                    <label className="block mb-8 text-2xl text-gray-700 text-center font-semibold">
+                                        Sign Up for Early access
+                                    </label>
                                     <div>
                                         <input 
                                             type="text" 
@@ -131,7 +163,7 @@ function SignUp() {
                                             required
                                         />
                                     </div>
-                                    <div className="mt-7">                
+                                    {/* <div className="mt-7">                
                                         <input 
                                             type="password" 
                                             placeholder="Enter your password" 
@@ -140,7 +172,7 @@ function SignUp() {
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />                           
-                                    </div>
+                                    </div> */}
                                     <div className="mt-7">
                                         <button className="bg-black w-full py-3 rounded-xl text-[#BEE477] shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
                                             Sign Up
@@ -167,9 +199,47 @@ function SignUp() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center mt-5 gap-2">
-                                        <ErrorOutlinedIcon className="text-[#FF3960]" sx={{fontSize: 60}} />
-                                        <p className="text-2xl">Sign up failed!</p>
-                                        <button className="bg-[#FF3960] text-white rounded-lg px-5 py-2" onClick={reset}>Try Again</button>
+                                        <ErrorOutlinedIcon className={errorType === 'userExists' ? "text-yellow-500" : "text-[#FF3960]"} sx={{fontSize: 60}} />
+                                        {errorType === 'userExists' ? (
+                                            <>
+                                                <p className="text-2xl">User already exists!</p>
+                                                <p className="text-center text-gray-600">
+                                                    Looks like you've already signed up for early access.
+                                                    <br />
+                                                    We'll notify you when we launch!
+                                                </p>
+                                                <button 
+                                                    className="bg-[#BEE477] text-white rounded-lg px-5 py-2 mt-5" 
+                                                    onClick={reset}
+                                                >
+                                                    Sign Up with another email
+                                                </button>
+                                                <div className="flex mt-2 items-center text-center">
+                                                    <hr className="border-gray-300 border-1 w-full rounded-md" />
+                                                    <label className="block font-medium text-sm text-gray-600 w-full">
+                                                        Or
+                                                    </label>
+                                                    <hr className="border-gray-300 border-1 w-full rounded-md" />
+                                                </div>
+                                                <Link 
+                                                    to="/" 
+                                                    className="bg-black text-[#BEE477] rounded-lg px-5 py-2 mt-2"
+                                                >
+                                                    Go to Home
+                                                </Link>
+                                            </>
+                                            ) : (
+                                                <>
+                                                    <p className="text-2xl">Sign up failed!</p>
+                                                    <button 
+                                                        className="bg-[#FF3960] text-white rounded-lg px-5 py-2" 
+                                                        onClick={reset}
+                                                    >
+                                                        Try Again
+                                                    </button>
+                                                </>
+                                            )
+                                        }
                                     </div>
                                 )
                             }
