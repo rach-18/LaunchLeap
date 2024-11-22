@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { AppProvider } from './components/context/AppContext'
+import SharedResponse from './components/Query/SharedResponse'
 
 function App() {
   useEffect(() => {
@@ -26,6 +27,7 @@ function App() {
         <Route path='/signup' element={<SignUp />}></Route>
         <Route path='/query' element={<Query />}></Route>
           <Route path='/responses' element={<Responses />}></Route>
+          <Route path='/response/:id' element={<SharedResponse />}></Route>
         </Routes>
       </AppProvider>
     </BrowserRouter>

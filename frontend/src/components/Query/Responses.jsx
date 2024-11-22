@@ -4,14 +4,16 @@ import { useAppContext } from '../context/AppContext'
 import ResponseCard from './ResponseCard'
 import axios from 'axios'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { db } from '../../firebase'
 import { collection, addDoc } from 'firebase/firestore'
+import { CircularProgress } from '@mui/material'
 
 function Responses() {
-    const { allResponses, setAllResponses } = useAppContext()
+    const { allResponses, setAllResponses, analysisResponse, formData, questions } = useAppContext()
     const [showModal, setShowModal] = useState(false)
     const [submitStatus, setSubmitStatus] = useState({success: false, message: ''})
+    const navigate = useNavigate()
 
     // const submitAllResponses = async () => {
     //     // Debug log
@@ -36,21 +38,29 @@ function Responses() {
 
     const submitAllResponses = async () => {
         try {
-            // Add responses to Firestore
+            // Add responses to Firestore with a unique ID
             const responsesCollectionRef = collection(db, "responses")
-            await addDoc(responsesCollectionRef, {
+            const docRef = await addDoc(responsesCollectionRef, {
                 responses: allResponses,
                 timestamp: new Date(),
+                formData,
+                analysisResponse,
                 // Add any other metadata you want to store
             });
             
-            setSubmitStatus({success: true, message: 'Thank you for your responses!'})
+            setSubmitStatus({
+                success: true, 
+                message: 'Thank you for your responses! You can bookmark this page to access your results anytime.'
+            })
             setAllResponses([])
+            
+            // Redirect to the unique response URL
+            navigate(`/response/${docRef.id}`)
         } catch (error) {
             console.error('Error saving responses:', error)
             setSubmitStatus({success: false, message: 'Error saving responses. Please try again.'})
+            setShowModal(true)
         }
-        setShowModal(true)
     }
 
     return (
@@ -77,12 +87,140 @@ function Responses() {
 
                 {/* Main content */}
                 <h1 className='text-center text-4xl font-bold'>Responses</h1>
-                <div className='flex flex-col items-center gap-10 mt-4'>
-                    <div className='w-11/12 mx-auto mt-5 flex flex-wrap gap-5 justify-center relative z-10'>
-                        {allResponses.map((response, index) => (
-                            <ResponseCard key={index} main={response.question} userInput={response.userInput} response={response.response} />
-                        ))}
-                    </div>
+                <p className='text-center text-gray-600'>{formData.userName}, we have analysed your startup, {formData.startupName} and here are the results</p>
+                <div className='flex flex-col items-center gap-10 mt-4 max-w-3xl mx-auto relative z-10'>
+                    {
+                        questions.map((question, index) => {
+                            return (
+                                <>
+                                    <div key={index} className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                        <div className='text-left w-full mb-4'>
+                                            <p className='text-lg font-bold'>{question.main}</p>
+                                        <p className='text-gray-500'>{question.sub}</p>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            disabled
+                                            value={formData[question.field]}
+                                            className='w-full border-2 border-gray-200 rounded-lg p-4 
+                                                    bg-white text-gray-900 placeholder-gray-400 
+                                                    focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
+                                                    hover:border-green-500 transition-all duration-300
+                                                    shadow-sm hover:shadow-md' 
+                                            />
+                                    </div>
+                                    {
+                                        index === 0 ? (
+                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                                <p className='font-bold text-center text-green-600'>Response:</p>
+                                                <div className='text-left w-full mb-4'>
+                                                    <p className='text-2xl font-bold'>StartUp Uniqueness Score:</p>
+                                                    <p className='text-gray-500'>How unique is your startup idea?</p>
+                                                </div>
+                                                <div className='flex items-center gap-4'>
+                                                    {/* <CircularProgress 
+                                                        variant="determinate" 
+                                                        thickness={5}
+                                                        size={50}
+                                                        value={analysisResponse.startupAnalysis.startupUniquenessScore.score * 10}
+                                                     /> */}
+                                                    <p className='font-bold text-2xl pb-4'>{analysisResponse.startupAnalysis.startupUniquenessScore.score} / 10</p>
+                                                    <p className='text-gray-500'>{analysisResponse.startupAnalysis.startupUniquenessScore.marketComplexity}</p>
+                                                </div>
+                                                <p>{analysisResponse.startupAnalysis.startupUniquenessScore.rationale}</p>
+                                            </div>
+                                        ) : index === 1 ? (
+                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                                <p className='font-bold text-center text-green-600'>Response:</p>
+                                                <div className='text-left w-full mb-4'>
+                                                    <p className='text-2xl font-bold'>Founder's Thought Clarity:</p>
+                                                    <p className='text-gray-500'>Assessing the clarity of your startup vision</p>
+                                                </div>
+                                                <div className='flex items-center gap-4'>
+                                                    {/* <CircularProgress 
+                                                        variant="determinate" 
+                                                        thickness={5}
+                                                        size={50}
+                                                        value={analysisResponse.startupAnalysis.startupUniquenessScore.score * 10}
+                                                     /> */}
+                                                    <p className='text-gray-500'>Fluff Meter: </p>
+                                                    <p className='font-bold text-2xl pb-4'>{analysisResponse.startupAnalysis.foundersThoughtClarity.fluffMeter} / 10</p>
+                                                </div>
+                                                <div className='mb-4'>
+                                                    <p className='font-semibold'>Potential Assumptions:</p>
+                                                    <ul className='list-disc list-inside'>
+                                                        {analysisResponse.startupAnalysis.foundersThoughtClarity.potentialAssumptions.map((assumption, index) => (
+                                                            <li key={index}>{assumption}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <div>
+                                                    <p className='font-semibold'>Biases identified:</p>
+                                                    <ul className='list-disc list-inside'>
+                                                        {analysisResponse.startupAnalysis.foundersThoughtClarity.biasesIdentified.map((bias, index) => (
+                                                            <li key={index} className='l'>{bias}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        ) : index === 2 ?  (
+                                            <>
+                                                <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                                    <p className='font-bold text-center text-green-600'>Response:</p>
+                                                    <div className='text-left w-full mb-4'>
+                                                        <p className='text-2xl font-bold'>Market Assessment:</p>
+                                                        <p className='text-gray-500'>Analyzing your total addressable market</p>
+                                                    </div>
+                                                    <div className='mb-4'>
+                                                        <p><span className='font-semibold mb-2'>Global Digital Health Market:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.globalDigitalHealthMarket}</p>
+                                                        <p><span className='font-semibold mb-2'>Nutrition Coaching Segment:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.nutritionCoachingSegment}</p>
+                                                        <p><span className='font-semibold mb-2'>Realistic Addressable SAM:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.realisticAddressableSAM}</p>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : <>
+                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                                <p className='font-bold text-center text-green-600'>Response:</p>
+                                                <div className='text-left w-full mb-4'>
+                                                    <p className='text-2xl font-bold'>Recommended Traction Channels:</p>
+                                                    <p className='text-gray-500'>Top channels to focus on for your startup</p>
+                                                </div>
+                                                {
+                                                    analysisResponse.startupAnalysis.tractionChannels.map((channel, index) => {
+                                                        return (
+                                                            <div key={index} className='mb-4'>
+                                                                <p className='font-bold mb-1'>{channel.channel}</p>
+                                                                <p><span className='font-semibold mb-2'>CAC:</span> {channel.customerAcquisitionCost}</p>
+                                                                <p><span className='font-semibold mb-2'>Complexity:</span> {channel.complexity}</p>
+                                                                <p><span className='font-semibold mb-2'>Time To Results:</span> {channel.timeToResults}</p>
+                                                                <p><span className='font-semibold mb-2'>Rationale:</span> {channel.rationale}</p>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                            
+                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                                                <p className='font-bold text-center text-green-600'>Response:</p>
+                                                <div className='text-left w-full mb-4'>
+                                                    <p className='text-2xl font-bold'>Recommended Next Steps:</p>
+                                                    <p className='text-gray-500'>Action items to move your startup forward</p>
+                                                </div>
+                                                <ul className='list-disc list-inside'>
+                                                    {
+                                                        analysisResponse.startupAnalysis.recommendedNextSteps.map((step, index) => (
+                                                            <li key={index}>{step}</li>
+                                                        ))
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </>
+                                    }                                
+                                </>
+                            )
+                        })
+                    }
 
                     <button 
                         to="/signup"
