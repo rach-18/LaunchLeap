@@ -56,9 +56,28 @@ function Footer() {
                     </div>
                 </div>
                 <p className="text-sm text-center mt-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p> */}
-                <div className="flex flex-col items-center gap-5">
-                    <h1 className="sm:text-4xl text-3xl font-bold">LAUNCHLEAP</h1>
-                    <Link to='/signup' className="bg-[#B8FF33] lg:text-xl sm:text-lg font-semibold text-black py-2 px-4 rounded-full lg:w-1/3 sm:w-1/2 w-11/12 text-center">Sign up for Early access</Link>
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col items-center gap-8 max-w-4xl mx-auto text-center">
+                        <h1 className="sm:text-4xl text-3xl font-bold">LAUNCHLEAP</h1>
+                        
+                        <div className="space-y-6">
+                            <div className="space-y-4 lg:text-xl md:text-lg text-base">
+                                <p>A custom AI trained on 1000's of marketing strategies, tactics, and content to help your startup gain explosive growth</p>
+                                <p>A platform to track and continuously improve your traction channels</p>
+                            </div>
+                            
+                            <p className="lg:text-xl md:text-lg text-base">
+                                If you're interested in either, this is what LaunchLeap does.
+                            </p>
+                        </div>
+
+                        <Link 
+                            to='/signup' 
+                            className="bg-[#B8FF33] lg:text-xl sm:text-lg font-semibold text-black py-3 px-6 rounded-full lg:w-2/3 sm:w-3/4 w-11/12 text-center hover:bg-[#a5e82d] transition-colors"
+                        >
+                            Sign up for Early Access
+                        </Link>
+                    </div>
                 </div>
             </footer>
         </>

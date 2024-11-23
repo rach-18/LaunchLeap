@@ -31,7 +31,7 @@ function Hero() {
                         data-aos-delay="1000"
                     >
                         {/* <Link to='/signup' className="bg-[#1e1e1e] text-[#B8FF33] text-base rounded-lg px-4 py-2 font-thin">Sign Up for early Access</Link> */}
-                        <Link to='/query' className="bg-[#1e1e1e] text-[#B8FF33] text-base rounded-lg px-4 py-2 font-thin">Lets Hear Your Query</Link>
+                        <Link to='/query' className="bg-[#1e1e1e] text-[#B8FF33] text-base rounded-lg px-4 py-2 font-thin">Validate Your Startup Idea for Free</Link>
                     </div>
                 </div>
             </section>

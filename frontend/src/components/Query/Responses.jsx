@@ -1,67 +1,98 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { db } from '../../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
-import { useAppContext } from '../context/AppContext'
-import ResponseCard from './ResponseCard'
-import axios from 'axios'
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { db } from '../../firebase'
-import { collection, addDoc } from 'firebase/firestore'
-import { CircularProgress } from '@mui/material'
-
+import { CircularProgress, Button, Box } from '@mui/material'
+import { ContentCopy } from '@mui/icons-material'
+import ReactMarkdown from 'react-markdown'
+import UserCard from './UserCard'
 function Responses() {
-    const { allResponses, setAllResponses, analysisResponse, formData, questions } = useAppContext()
-    const [showModal, setShowModal] = useState(false)
-    const [submitStatus, setSubmitStatus] = useState({success: false, message: ''})
-    const navigate = useNavigate()
+    const { id } = useParams()
+    const [loading, setLoading] = useState(true)
+    const [responseData, setResponseData] = useState(null)
+    const [error, setError] = useState(null)
+    const [copySuccess, setCopySuccess] = useState(false)
 
-    // const submitAllResponses = async () => {
-    //     // Debug log
-    //     console.log('Sending data:', { responses: allResponses });
-
-    //     try {
-    //         await axios.post(`${import.meta.env.VITE_API_URL}/api/responses`, {
-    //             responses: allResponses
-    //         }, {
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             withCredentials: true
-    //         })
-    //         setSubmitStatus({success: true, message: 'Responses saved successfully!'})
-    //     } catch (error) {
-    //         console.error('Error saving responses:', error)
-    //         setSubmitStatus({success: false, message: 'Error saving responses. Please try again.'})
-    //     }
-    //     setShowModal(true)
-    // }
-
-    const submitAllResponses = async () => {
-        try {
-            // Add responses to Firestore with a unique ID
-            const responsesCollectionRef = collection(db, "responses")
-            const docRef = await addDoc(responsesCollectionRef, {
-                responses: allResponses,
-                timestamp: new Date(),
-                formData,
-                analysisResponse,
-                // Add any other metadata you want to store
-            });
-            
-            setSubmitStatus({
-                success: true, 
-                message: 'Thank you for your responses! You can bookmark this page to access your results anytime.'
-            })
-            setAllResponses([])
-            
-            // Redirect to the unique response URL
-            navigate(`/response/${docRef.id}`)
-        } catch (error) {
-            console.error('Error saving responses:', error)
-            setSubmitStatus({success: false, message: 'Error saving responses. Please try again.'})
-            setShowModal(true)
+    useEffect(() => {
+        const fetchResponse = async () => {
+            try {
+                const docRef = doc(db, "responses", id)
+                const docSnap = await getDoc(docRef)
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data()
+                    console.log('Firebase Data:', data)
+                    setResponseData(docSnap.data())
+                } else {
+                    setError("Response not found")
+                }
+            } catch (err) {
+                setError("Error loading response")
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
         }
+
+        fetchResponse()
+    }, [id])
+
+    const handleCopyLink = () => {
+        const currentUrl = window.location.href;
+        navigator.clipboard.writeText(currentUrl)
+            .then(() => {
+                setCopySuccess(true);
+                setTimeout(() => setCopySuccess(false), 2000);
+            })
+            .catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy URL');
+            });
+    };
+
+    const getScoreColor = (score) => {
+        if (score >= 7) return '#22c55e' // green-500
+        if (score >= 4) return '#eab308' // yellow-500
+        return '#ef4444' // red-500
     }
+
+    const formatCamelCaseToTitle = (input) => {
+        return input
+            .replace(/([A-Z])/g, " $1") // Insert space before uppercase letters
+            .replace(/^./, str => str.toUpperCase()) // Capitalize the first letter
+            .trim(); // Remove any leading/trailing spaces
+    }
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center">
+                    <CircularProgress />
+                </div>
+                <Footer />
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-red-600">{error}</h1>
+                        <p className="text-gray-600">Please check the URL and try again</p>
+                    </div>
+                </div>
+                <Footer />
+            </>
+        )
+    }
+
+    console.log(responseData)
 
     return (
         <>
@@ -85,222 +116,234 @@ function Responses() {
                     <div className="absolute sm:right-20 right-8 bottom-20 sm:w-32 w-28 sm:h-32 h-28 border-2 border-green-500/30 rounded-full animate-pulse-circle delay-1000"></div>
                 </div>
 
-                {/* Main content */}
-                <h1 className='text-center text-4xl font-bold'>Responses</h1>
-                <p className='text-center text-gray-600'>{formData.userName}, we have analysed your startup, {formData.startupName} and here are the results</p>
-                <div className='flex flex-col items-center gap-10 mt-4 max-w-3xl mx-auto relative z-10'>
-                    {
-                        questions.map((question, index) => {
-                            return (
-                                <>
-                                    <div key={index} className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                        <div className='text-left w-full mb-4'>
-                                            <p className='text-lg font-bold'>{question.main}</p>
-                                        <p className='text-gray-500'>{question.sub}</p>
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            required
-                                            disabled
-                                            value={formData[question.field]}
-                                            className='w-full border-2 border-gray-200 rounded-lg p-4 
-                                                    bg-white text-gray-900 placeholder-gray-400 
-                                                    focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
-                                                    hover:border-green-500 transition-all duration-300
-                                                    shadow-sm hover:shadow-md' 
-                                            />
-                                    </div>
-                                    {
-                                        index === 0 ? (
-                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                                <p className='font-bold text-center text-green-600'>Response:</p>
-                                                <div className='text-left w-full mb-4'>
-                                                    <p className='text-2xl font-bold'>StartUp Uniqueness Score:</p>
-                                                    <p className='text-gray-500'>How unique is your startup idea?</p>
-                                                </div>
-                                                <div className='flex items-center gap-4'>
-                                                    {/* <CircularProgress 
-                                                        variant="determinate" 
-                                                        thickness={5}
-                                                        size={50}
-                                                        value={analysisResponse.startupAnalysis.startupUniquenessScore.score * 10}
-                                                     /> */}
-                                                    <p className='font-bold text-2xl pb-4'>{analysisResponse.startupAnalysis.startupUniquenessScore.score} / 10</p>
-                                                    <p className='text-gray-500'>{analysisResponse.startupAnalysis.startupUniquenessScore.marketComplexity}</p>
-                                                </div>
-                                                <p>{analysisResponse.startupAnalysis.startupUniquenessScore.rationale}</p>
-                                            </div>
-                                        ) : index === 1 ? (
-                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                                <p className='font-bold text-center text-green-600'>Response:</p>
-                                                <div className='text-left w-full mb-4'>
-                                                    <p className='text-2xl font-bold'>Founder's Thought Clarity:</p>
-                                                    <p className='text-gray-500'>Assessing the clarity of your startup vision</p>
-                                                </div>
-                                                <div className='flex items-center gap-4'>
-                                                    {/* <CircularProgress 
-                                                        variant="determinate" 
-                                                        thickness={5}
-                                                        size={50}
-                                                        value={analysisResponse.startupAnalysis.startupUniquenessScore.score * 10}
-                                                     /> */}
-                                                    <p className='text-gray-500'>Fluff Meter: </p>
-                                                    <p className='font-bold text-2xl pb-4'>{analysisResponse.startupAnalysis.foundersThoughtClarity.fluffMeter} / 10</p>
-                                                </div>
-                                                <div className='mb-4'>
-                                                    <p className='font-semibold'>Potential Assumptions:</p>
-                                                    <ul className='list-disc list-inside'>
-                                                        {analysisResponse.startupAnalysis.foundersThoughtClarity.potentialAssumptions.map((assumption, index) => (
-                                                            <li key={index}>{assumption}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                                <div>
-                                                    <p className='font-semibold'>Biases identified:</p>
-                                                    <ul className='list-disc list-inside'>
-                                                        {analysisResponse.startupAnalysis.foundersThoughtClarity.biasesIdentified.map((bias, index) => (
-                                                            <li key={index} className='l'>{bias}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        ) : index === 2 ?  (
-                                            <>
-                                                <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                                    <p className='font-bold text-center text-green-600'>Response:</p>
-                                                    <div className='text-left w-full mb-4'>
-                                                        <p className='text-2xl font-bold'>Market Assessment:</p>
-                                                        <p className='text-gray-500'>Analyzing your total addressable market</p>
-                                                    </div>
-                                                    <div className='mb-4'>
-                                                        <p><span className='font-semibold mb-2'>Global Digital Health Market:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.globalDigitalHealthMarket}</p>
-                                                        <p><span className='font-semibold mb-2'>Nutrition Coaching Segment:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.nutritionCoachingSegment}</p>
-                                                        <p><span className='font-semibold mb-2'>Realistic Addressable SAM:</span> {analysisResponse.startupAnalysis.marketAssessment.totalAddressableMarket.realisticAddressableSAM}</p>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : <>
-                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                                <p className='font-bold text-center text-green-600'>Response:</p>
-                                                <div className='text-left w-full mb-4'>
-                                                    <p className='text-2xl font-bold'>Recommended Traction Channels:</p>
-                                                    <p className='text-gray-500'>Top channels to focus on for your startup</p>
-                                                </div>
-                                                {
-                                                    analysisResponse.startupAnalysis.tractionChannels.map((channel, index) => {
-                                                        return (
-                                                            <div key={index} className='mb-4'>
-                                                                <p className='font-bold mb-1'>{channel.channel}</p>
-                                                                <p><span className='font-semibold mb-2'>CAC:</span> {channel.customerAcquisitionCost}</p>
-                                                                <p><span className='font-semibold mb-2'>Complexity:</span> {channel.complexity}</p>
-                                                                <p><span className='font-semibold mb-2'>Time To Results:</span> {channel.timeToResults}</p>
-                                                                <p><span className='font-semibold mb-2'>Rationale:</span> {channel.rationale}</p>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </div>
-                                            
-                                            <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
-                                                <p className='font-bold text-center text-green-600'>Response:</p>
-                                                <div className='text-left w-full mb-4'>
-                                                    <p className='text-2xl font-bold'>Recommended Next Steps:</p>
-                                                    <p className='text-gray-500'>Action items to move your startup forward</p>
-                                                </div>
-                                                <ul className='list-disc list-inside'>
-                                                    {
-                                                        analysisResponse.startupAnalysis.recommendedNextSteps.map((step, index) => (
-                                                            <li key={index}>{step}</li>
-                                                        ))
-                                                    }
-                                                </ul>
-                                            </div>
-                                        </>
-                                    }                                
-                                </>
-                            )
-                        })
-                    }
-
-                    <button 
-                        to="/signup"
-                        onClick={submitAllResponses}
-                        className="relative px-8 py-3 bg-green-600 text-white rounded-lg 
-                            hover:bg-green-700 disabled:bg-gray-400 
-                            transition-all duration-300 hover:scale-105
-                            shadow-md hover:shadow-lg"
-                    >
-                        Submit
-                    </button>
-                </div>
-
-                {/* <div className='flex flex-col items-center gap-4 mt-4 w-11/12 mx-auto text-center'>
-                    <p className='font-semibold'>To identify the best traction channels suggested uniquely for your product from a cutom trained AI which extracts insigts from 20+ strategies, 200+ tactics, 500 + case studies, click below to sign up! </p>
-                    <Link 
-                        to="/signup"
-                        className="relative px-8 py-3 bg-green-600 text-white rounded-lg 
-                            hover:bg-green-700 disabled:bg-gray-400 
-                            transition-all duration-300 hover:scale-105
-                            shadow-md hover:shadow-lg"
-                    >
-                        Sign Up
-                    </Link>
-                </div> */}
-                {showModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white p-8 rounded-lg shadow-xl max-w-md">
-                            <div className="text-center">
-                                {submitStatus.success ? (
-                                    <svg className="mx-auto h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                ) : (
-                                    <svg className="mx-auto h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                )}
-                                <h3 className={`mt-2 text-xl font-semibold ${submitStatus.success ? 'text-green-600' : 'text-red-600'}`}>
-                                    {submitStatus.success ? 'Responses saved successfully!' : 'Error'}
-                                </h3>
-                                <p className="mt-2 mb-5 text-gray-600">{submitStatus.message}</p>
-                                {
-                                    submitStatus.success ? (
-                                        <div className='flex flex-col items-center gap-4 mt-4 w-11/12 mx-auto text-center'>
-                                            <p>To identify the best traction channels suggested uniquely for your product from a cutom trained AI which extracts insigts from 20+ strategies, 200+ tactics, 500 + case studies, click below to sign up! </p>
-                                            <Link 
-                                                to="/signup"
-                                                className="relative px-8 py-3 bg-green-600 text-white rounded-lg 
-                                                    hover:bg-green-700 disabled:bg-gray-400 
-                                                    transition-all duration-300 hover:scale-105
-                                                    shadow-md hover:shadow-lg"
-                                            >
-                                                Sign Up
-                                            </Link>
-                                            <Link to='/' className='text-gray-600 underline'>Not Now</Link>
-                                        </div>
-                                    ) : (
-                                        <Link 
-                                            to="/query"
-                                            className="mt-10 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
-                                        >
-                                            Try Again
-                                        </Link>   
-                                    )
-                                }
-                                {/* <button
-                                    onClick={() => setShowModal(false)}
-                                    className="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
-                                >
-                                    Close
-                                </button> */}
-                            </div>
-                        </div>
+                <div className='flex flex-col items-center gap-10 mt-4 max-w-3xl mx-auto relative z-10 mb-10'>
+                    {/* Copy Link Button */}
+                    <div className="w-full flex justify-end">
+                        <button 
+                            onClick={handleCopyLink}
+                            className="px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
+                        >
+                            <ContentCopy /> {copySuccess ? 'Copied!' : 'Copy Share Link'}
+                        </button>
                     </div>
-                )}
+
+                    {/* User Info */}
+                    <div className="w-full">
+                        <div className='text-left w-full mb-4'>
+                            <p className='text-2xl font-bold'>Startup Information</p>
+                        </div>
+                        <UserCard field="Owner" value={responseData.formData.userName} type="user" />
+                        <UserCard field="Startup Name" value={responseData.formData.startupName} type="user" />
+                        <UserCard field="Budget" value={responseData.formData.budget} type="user" />
+                        <hr className='mt-8 border-gray-300' />
+
+                        {/* Startup Uniqueness Score */}
+                        <UserCard field="What problem are you trying to solve and what is your unique edge?" value={responseData.formData.startupIdea} type="idea" />
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>StartUp Uniqueness Score:</p>
+                                <p className='text-gray-500'>How unique is your startup idea?</p>
+                            </div>
+                            <div className='flex items-center w-full justify-center my-2'>
+                                <Box position="relative" display="inline-flex">
+                                    <CircularProgress 
+                                        variant="determinate" 
+                                        value={responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.score * 10}
+                                        size={100}
+                                        thickness={4}
+                                        sx={{
+                                            color: getScoreColor(responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.score),
+                                            backgroundColor: '#e5e7eb',
+                                            borderRadius: '50%',
+                                            '& .MuiCircularProgress-circle': {
+                                                transition: 'stroke-dashoffset 0.5s ease 0s',
+                                            }
+                                        }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            top: 0,
+                                            left: 0,
+                                            bottom: 0,
+                                            right: 0,
+                                            position: 'absolute',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <p className='text-xl font-bold' style={{ color: getScoreColor(responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.score) }}>
+                                            {responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.score}/10
+                                        </p>
+                                    </Box>
+                                </Box>
+                            </div>
+                            <p>
+                                <span className='font-bold'>Complexity:</span> {responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.marketComplexity}
+                            </p>
+                            <p><span className='font-bold'>Rationale:</span> {responseData.analysisResponse?.startupAnalysis?.startupUniquenessScore?.rationale}</p>
+                        </div>
+                        <hr className='mt-8 border-gray-300' />
+
+                        {/* Target Audience */}
+                        <UserCard field="Target Audience" value={responseData.formData.targetAudience} type="idea" />
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>Founder's Thought Clarity:</p>
+                                <p className='text-gray-500'>Assessing the clarity of your startup vision</p>
+                            </div>
+                            <div className='flex flex-col items-center w-full justify-center my-2'>
+                                <Box position="relative" display="inline-flex">
+                                    <CircularProgress 
+                                        variant="determinate" 
+                                        value={responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.fluffMeter * 10}
+                                        size={100}
+                                        thickness={4}
+                                        sx={{
+                                            color: getScoreColor(responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.fluffMeter),
+                                            backgroundColor: '#e5e7eb',
+                                            borderRadius: '50%',
+                                            '& .MuiCircularProgress-circle': {
+                                                transition: 'stroke-dashoffset 0.5s ease 0s',
+                                            }
+                                        }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            top: 0,
+                                            left: 0,
+                                            bottom: 0,
+                                            right: 0,
+                                            position: 'absolute',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <p className='text-xl font-bold' style={{ color: getScoreColor(responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.fluffMeter) }}>
+                                            {responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.fluffMeter}/10
+                                        </p>
+                                    </Box>
+                                </Box>
+                                <p className='mt-2 text-gray-500'>Fluff Meter</p>
+                            </div>
+                            <p className='font-bold'>Potential Assumptions:</p>
+                            <ul className='list-disc list-inside mb-2'>
+                                {
+                                    responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.potentialAssumptions?.map((assumption, index) => {
+                                        return <li key={index}>{assumption}</li>
+                                    })
+                                }
+                            </ul>
+                            <p className='font-bold'>Biases Identified:</p>
+                            <ul className='list-disc list-inside mb-2'>
+                                {
+                                    responseData.analysisResponse?.startupAnalysis?.foundersThoughtClarity?.biasesIdentified?.map((assumption, index) => {
+                                        return <li key={index}>{assumption}</li>
+                                    })
+                                }
+                            </ul>
+                        </div>
+                        <hr className='mt-8 border-gray-300' />
+
+                        {/* TAM */}
+                        <UserCard field="Estimated Total Addressable Market (TAM)?" value={responseData.formData.estimatedTAM} type="idea" />
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>Market Assessment:</p>
+                                <p className='text-gray-500'>Analyzing your total addressable market</p>
+                            </div>
+                            {
+                                Object.keys(responseData.analysisResponse?.startupAnalysis?.marketAssessment?.totalAddressableMarket).map((key, index) => {
+                                    return <p key={index}><span className='font-bold mb-2'>{formatCamelCaseToTitle(key)}:</span> {responseData.analysisResponse?.startupAnalysis?.marketAssessment?.totalAddressableMarket[key]}</p>
+                                })
+                            }
+                        </div>
+                        <hr className='mt-8 border-gray-300' />
+                        
+                        {/* Resources */}
+                        <UserCard field="Your current resources at hand for marketing / traction building ?" value={responseData.formData.resources} type="idea" />
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>Recommended Traction Channels:</p>
+                                <p className='text-gray-500'>Top channels to focus on for your startup</p>
+                            </div>
+                            {
+                                responseData.analysisResponse?.startupAnalysis?.tractionChannels?.map((channel, index) => {
+                                    return (
+                                        <>
+                                            <div key={index}>
+                                                <p className='font-bold'>{channel.channel}</p>
+                                                <p><span className='text-gray-500'>CAC:</span> {channel.customerAcquisitionCost}</p>
+                                                <p><span className='text-gray-500'>Complexity:</span> {channel.complexity}</p>
+                                                <p><span className='text-gray-500'>Time to Results:</span> {channel.timeToResults}</p>
+                                                <p><span className='text-gray-500'>Rationale:</span> {channel.rationale}</p>
+                                            </div>
+                                            {
+                                                index !== responseData.analysisResponse?.startupAnalysis?.tractionChannels?.length - 1 && (
+                                                    <hr className='my-4' />
+                                                )
+                                            }
+                                        </>
+                                    )
+                                })
+                            }
+                        </div>
+
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>Underutilized Channels:</p>
+                                <p className='text-gray-500'>Potential high-impact, low-competition channels</p>
+                            </div>
+                            {
+                                responseData.analysisResponse?.startupAnalysis?.underutilizedChannels?.map((channel, index) => {
+                                    return (
+                                        <>
+                                            <div key={index}>
+                                                <p className='font-bold'>{channel.channel}</p>
+                                                <p><span className='text-gray-500'>CAC:</span> {channel.customerAcquisitionCost}</p>
+                                                <p><span className='text-gray-500'>Complexity:</span> {channel.complexity}</p>
+                                                <p><span className='text-gray-500'>Time to Results:</span> {channel.timeToResults}</p>
+                                                <p><span className='text-gray-500'>Potential Reach:</span> {channel.potentialReach}</p>
+                                            </div>
+                                            {
+                                                index !== responseData.analysisResponse?.startupAnalysis?.underutilizedChannels?.length - 1 && (
+                                                    <hr className='my-4' />
+                                                )
+                                            }
+                                        </>
+                                    )
+                                })
+                            }
+                        </div>
+
+                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
+                            <p className='font-bold text-center text-green-600'>Response</p>
+                            <div className='text-left w-full mb-4'>
+                                <p className='text-2xl font-bold'>Recommended Next Steps:</p>
+                                <p className='text-gray-500'>Action items to move your startup forward</p>
+                            </div>
+                            <ul className='list-disc list-inside mb-2'>
+                                {
+                                    responseData.analysisResponse?.startupAnalysis?.recommendedNextSteps?.map((step, index) => {
+                                        return <li key={index}>{step}</li>
+                                    })
+                                }
+                            </ul>
+                        </div>
+
+                        {/* <UserCard field="Start Up Idea" value={responseData.formData.startUpIdea} type="idea" /> */}
+                    </div>
+                </div>
             </div>
             <Footer />
         </>
     )
 }
 
-export default Responses;
+export default Responses

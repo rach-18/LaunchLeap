@@ -26,8 +26,8 @@ function App() {
           <Route path='/' element={<Home />}></Route>
         <Route path='/signup' element={<SignUp />}></Route>
         <Route path='/query' element={<Query />}></Route>
-          <Route path='/responses' element={<Responses />}></Route>
-          <Route path='/response/:id' element={<SharedResponse />}></Route>
+          {/* <Route path='/responses' element={<Responses />}></Route> */}
+          <Route path='/response/:id' element={<Responses />}></Route>
         </Routes>
       </AppProvider>
     </BrowserRouter>

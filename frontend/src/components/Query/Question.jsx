@@ -4,10 +4,15 @@ import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigate } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import { collection, addDoc, setDoc, doc } from 'firebase/firestore'
+import { db } from '../../firebase'
 
 function Question() {
     const navigate = useNavigate()
     const { allResponses, setAllResponses, questions, formData, setFormData, analysisResponse, setAnalysisResponse } = useAppContext()
+    const [showCopyModal, setShowCopyModal] = useState(false)
+    const [responseUrl, setResponseUrl] = useState('')
 
     const [responses, setResponses] = useState({})
     const [loading, setLoading] = useState(false)
@@ -157,6 +162,15 @@ function Question() {
         }
     }, [userId, formData.userName])
 
+    const createUrlSafeId = (name) => {
+        // Convert to lowercase, replace spaces with hyphens, remove special characters
+        return name.toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9-]/g, '-') // Replace special chars with hyphen
+            .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    }
+
     const handleQuestionSubmit = async (e) => {
         e.preventDefault()
         if (!formData.userName.trim() || !formData.startupName.trim() || !formData.budget) return
@@ -177,41 +191,44 @@ function Question() {
                 structuredInput: structuredInput,
                 systemPrompt: CLAUDE_PROMPT,
                 expectedFormat: JSON.stringify(RESPONSE_FORMAT)
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
             })
             
             console.log('Response from server:', data)
             
             if (data.response) {
-                console.log('Analysis Response:', data.response);
                 setAnalysisResponse(data.response);
                 setResponses(data.response)
                 
-                const formattedResponse = {
-                    userName: formData.userName,
-                    userId,
-                    startupName: formData.startupName,
-                    input: structuredInput,
-                    response: data.response
+                try {
+                    const responsesCollectionRef = collection(db, "responses")
+                    const urlSafeName = createUrlSafeId(formData.userName)
+                    const shortId = uuidv4().slice(0, 8) // Take first 8 characters of UUID
+                    const customDocId = `${urlSafeName}-${shortId}`
+
+                    // Use setDoc instead of addDoc to specify custom ID
+                    const docRef = await setDoc(doc(db, "responses", customDocId), {
+                        formData,
+                        analysisResponse: data.response,
+                        timestamp: new Date(),
+                        userId: userId,
+                        customId: customDocId
+                    });
+
+                    const url = `${window.location.origin}/response/${customDocId}`
+                    setResponseUrl(url)
+                    setShowCopyModal(true)
+
+                    // Navigate to the response page
+                    navigate(`/response/${customDocId}`)
+                } catch (error) {
+                    console.error('Error saving to Firebase:', error)
                 }
-                
-                setAllResponses([...allResponses, formattedResponse])
-                navigate('/responses')
-            } else {
-                console.error('Unexpected response format:', data)
-                setResponses({ error: 'Unexpected response format from server' })
             }
-            console.log('Analysis Response:', analysisResponse)
         } catch (error) {
             console.error('Error:', error)
             setResponses({ error: 'Sorry, something went wrong. Please try again.' })
         }
         setLoading(false)
-        console.log('Form data:', formData)
-        console.log('All Responses:', allResponses)
     }
 
     const handleInputChange = (field, value) => {
@@ -219,6 +236,16 @@ function Question() {
             ...prev,
             [field]: value
         }))
+    }
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(responseUrl)
+            // Optionally show a success message
+        } catch (err) {
+            console.error('Failed to copy:', err)
+            // Optionally show an error message
+        }
     }
 
     return (
@@ -264,35 +291,26 @@ function Question() {
                     />
                 </div>
 
-                {/* Budget Box */}
-                <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white">
-                    <div className='text-left w-full mb-4'>
-                        <p className='text-lg font-bold'>Budget</p>
-                        <p className='text-gray-500'>What's your estimated budget for this project? (in USD)</p>
-                    </div>
-                    <input 
-                        type="number" 
-                        required
-                        value={formData.budget}
-                        onChange={(e) => handleInputChange('budget', e.target.value)}
-                        placeholder='Enter your budget...' 
-                        className='w-full border-2 border-gray-200 rounded-lg p-4 
-                                bg-white text-gray-900 placeholder-gray-400 
-                                focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
-                                hover:border-green-500 transition-all duration-300
-                                shadow-sm hover:shadow-md' 
-                    />
-                </div>
-
                 {/* Questions */}
                 {questions.map((question, idx) => (
                     <div key={idx} className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white">
                         <div className='text-left w-full mb-4'>
                             <p className='text-lg font-bold'>{question.main}</p>
-                            <p className='text-gray-500'>{question.sub}</p>
+                            <ReactMarkdown 
+                                className='text-gray-500 prose prose-sm max-w-none space-y-6 mt-4' // Added space-y-6
+                                components={{
+                                    // Custom styling for specific markdown elements
+                                    p: ({node, ...props}) => <p className="" {...props} />, // Added mb-6 for paragraph spacing
+                                    strong: ({node, ...props}) => <span className="font-bold text-gray-700 block" {...props} />, // Added block and mb-4
+                                    ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-4" {...props} />, // Added space-y-4
+                                    li: ({node, ...props}) => <li className="" {...props} /> // Added mb-4
+                                }}
+                            >
+                                {question.sub}
+                            </ReactMarkdown>
+                            {/* <p className='text-gray-500'>{question.sub}</p> */}
                         </div>
-                        <input 
-                            type="text" 
+                        <textarea 
                             required
                             value={formData[question.field] || ''}
                             onChange={(e) => handleInputChange(question.field, e.target.value)}
@@ -305,6 +323,33 @@ function Question() {
                         />
                     </div>
                 ))}
+
+                {/* Budget Box */}
+                <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white">
+                    <div className='text-left w-full mb-4'>
+                        <p className='text-lg font-bold'>Monthly Marketing Budget</p>
+                        <p className='text-gray-500'>What's your estimated budget for this project? (in USD)</p>
+                    </div>
+                    <select 
+                        name="budget" 
+                        id="budget" 
+                        required 
+                        value={formData.budget}
+                        onChange={(e) => handleInputChange('budget', e.target.value)}
+                        className='w-full border-2 border-gray-200 rounded-lg p-4 
+                                bg-white text-gray-900 placeholder-gray-400 
+                                focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
+                                hover:border-green-500 transition-all duration-300
+                                shadow-sm hover:shadow-md'
+                    >
+                        <option value="" disabled selected>Select your monthly budget</option>
+                        <option value="$0 - $500">$0 - $500</option>
+                        <option value="$501 - $2,000">$501 - $2,000</option>
+                        <option value="$2,001 - $5,000">$2,001 - $5,000</option>
+                        <option value="$5,001 - $10,000">$5,001 - $10,000</option>
+                        <option value="$10,000+">$10,000+</option>
+                    </select>
+                </div>
                 
                 <div className="flex justify-center">
                     <button 
@@ -319,6 +364,42 @@ function Question() {
                     </button>
                 </div>
             </form>
+
+            {/* Copy Link Modal */}
+            {showCopyModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-xl max-w-md">
+                        <div className="text-center">
+                            <h3 className="text-xl font-semibold text-green-600 mb-4">
+                                Responses saved successfully!
+                            </h3>
+                            <p className="mb-4">
+                                You can access your results anytime using this link:
+                            </p>
+                            <div className="flex items-center gap-2 mb-4">
+                                <input 
+                                    type="text" 
+                                    value={responseUrl} 
+                                    readOnly 
+                                    className="w-full p-2 border rounded"
+                                />
+                                <button
+                                    onClick={copyToClipboard}
+                                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                >
+                                    Copy
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => setShowCopyModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
