@@ -25,10 +25,10 @@ function Query() {
                 </div>
 
                 <div className='relative px-4 mx-auto max-w-screen-xl text-center xl:py-28 py-36 z-10'>
-                    <h1 className='mb-4 font-extrabold tracking-tight leading-none lg:text-6xl md:text-5xl text-4xl text-gray-900 typewriter'>
+                    <h1 className='mb-4 font-extrabold tracking-tight leading-tight lg:text-6xl md:text-5xl sm:text-4xl text-3xl text-gray-900 typewriter px-2'>
                         Validate Your Startup Idea
                     </h1>
-                    <p className='mb-8 text-lg font-normal lg:text-xl sm:px-16 lg:px-48 text-gray-600'>
+                    <p className='mb-8 text-lg font-normal lg:text-xl sm:px-16 lg:px-48 text-gray-600 px-2'>
                         Get AI-powered insights to refine your business concept in minutes
                     </p>
                     
