@@ -118,7 +118,7 @@ function Responses() {
 
                 <div className='flex flex-col items-center gap-6 sm:gap-10 mt-4 mx-4 sm:mx-auto max-w-3xl relative z-10 mb-10'>
                     {/* Copy Link Button */}
-                    <div className="w-full flex justify-end">
+                    <div className="w-full flex sm:justify-end justify-center sm:mt-0 mt-8">
                         <button 
                             onClick={handleCopyLink}
                             className="px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-sm sm:text-base"
