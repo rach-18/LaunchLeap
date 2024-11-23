@@ -97,7 +97,7 @@ function Responses() {
     return (
         <>
             <Navbar />
-            <div className='min-h-[80vh] pt-20 pb-10 relative'>
+            <div className='min-h-[80vh] pt-16 sm:pt-20 pb-10 relative'>
                 {/* Animation */}
                 <div className="fixed h-screen w-screen top-0 inset-0 z-0 overflow-hidden">
                     <div className="absolute w-full h-full">
@@ -116,21 +116,21 @@ function Responses() {
                     <div className="absolute sm:right-20 right-8 bottom-20 sm:w-32 w-28 sm:h-32 h-28 border-2 border-green-500/30 rounded-full animate-pulse-circle delay-1000"></div>
                 </div>
 
-                <div className='flex flex-col items-center gap-10 mt-4 max-w-3xl mx-auto relative z-10 mb-10'>
+                <div className='flex flex-col items-center gap-6 sm:gap-10 mt-4 mx-4 sm:mx-auto max-w-3xl relative z-10 mb-10'>
                     {/* Copy Link Button */}
                     <div className="w-full flex justify-end">
                         <button 
                             onClick={handleCopyLink}
-                            className="px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
+                            className="px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 text-sm sm:text-base"
                         >
-                            <ContentCopy /> {copySuccess ? 'Copied!' : 'Copy Share Link'}
+                            <ContentCopy className='w-4 h-4 sm:w-5 sm:h-5' /> {copySuccess ? 'Copied!' : 'Copy Share Link'}
                         </button>
                     </div>
 
                     {/* User Info */}
-                    <div className="w-full">
+                    <div className="w-full space-y-6">
                         <div className='text-left w-full mb-4'>
-                            <p className='text-2xl font-bold'>Startup Information</p>
+                            <p className='text-xl sm:text-2xl font-bold'>Startup Information</p>
                         </div>
                         <UserCard field="Owner" value={responseData.formData.userName} type="user" />
                         <UserCard field="Startup Name" value={responseData.formData.startupName} type="user" />
@@ -139,11 +139,11 @@ function Responses() {
 
                         {/* Startup Uniqueness Score */}
                         <UserCard field="What problem are you trying to solve and what is your unique edge?" value={responseData.formData.startupIdea} type="idea" />
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>StartUp Uniqueness Score:</p>
-                                <p className='text-gray-500'>How unique is your startup idea?</p>
+                                <p className='text-xl sm:text-2xl font-bold'>StartUp Uniqueness Score:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>How unique is your startup idea?</p>
                             </div>
                             <div className='flex items-center w-full justify-center my-2'>
                                 <Box position="relative" display="inline-flex">
@@ -188,11 +188,11 @@ function Responses() {
 
                         {/* Target Audience */}
                         <UserCard field="Target Audience" value={responseData.formData.targetAudience} type="idea" />
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>Founder's Thought Clarity:</p>
-                                <p className='text-gray-500'>Assessing the clarity of your startup vision</p>
+                                <p className='text-xl sm:text-2xl font-bold'>Founder's Thought Clarity:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>Assessing the clarity of your startup vision</p>
                             </div>
                             <div className='flex flex-col items-center w-full justify-center my-2'>
                                 <Box position="relative" display="inline-flex">
@@ -250,11 +250,11 @@ function Responses() {
 
                         {/* TAM */}
                         <UserCard field="Estimated Total Addressable Market (TAM)?" value={responseData.formData.estimatedTAM} type="idea" />
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>Market Assessment:</p>
-                                <p className='text-gray-500'>Analyzing your total addressable market</p>
+                                <p className='text-xl sm:text-2xl font-bold'>Market Assessment:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>Analyzing your total addressable market</p>
                             </div>
                             {
                                 Object.keys(responseData.analysisResponse?.startupAnalysis?.marketAssessment?.totalAddressableMarket).map((key, index) => {
@@ -266,11 +266,11 @@ function Responses() {
                         
                         {/* Resources */}
                         <UserCard field="Your current resources at hand for marketing / traction building ?" value={responseData.formData.resources} type="idea" />
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>Recommended Traction Channels:</p>
-                                <p className='text-gray-500'>Top channels to focus on for your startup</p>
+                                <p className='text-xl sm:text-2xl font-bold'>Recommended Traction Channels:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>Top channels to focus on for your startup</p>
                             </div>
                             {
                                 responseData.analysisResponse?.startupAnalysis?.tractionChannels?.map((channel, index) => {
@@ -294,11 +294,11 @@ function Responses() {
                             }
                         </div>
 
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>Underutilized Channels:</p>
-                                <p className='text-gray-500'>Potential high-impact, low-competition channels</p>
+                                <p className='text-xl sm:text-2xl font-bold'>Underutilized Channels:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>Potential high-impact, low-competition channels</p>
                             </div>
                             {
                                 responseData.analysisResponse?.startupAnalysis?.underutilizedChannels?.map((channel, index) => {
@@ -322,11 +322,11 @@ function Responses() {
                             }
                         </div>
 
-                        <div className="p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full mt-2">
-                            <p className='font-bold text-center text-green-600'>Response</p>
+                        <div className="p-4 sm:p-8 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <p className='font-bold text-center text-green-600 text-sm sm:text-base'>Response</p>
                             <div className='text-left w-full mb-4'>
-                                <p className='text-2xl font-bold'>Recommended Next Steps:</p>
-                                <p className='text-gray-500'>Action items to move your startup forward</p>
+                                <p className='text-xl sm:text-2xl font-bold'>Recommended Next Steps:</p>
+                                <p className='text-gray-500 text-sm sm:text-base'>Action items to move your startup forward</p>
                             </div>
                             <ul className='list-disc list-inside mb-2'>
                                 {
