@@ -248,6 +248,34 @@ function Question() {
         }
     }
 
+    // Add this useEffect at the top of your component
+    useEffect(() => {
+        // Function to adjust textarea height
+        const adjustTextareaHeight = (textarea) => {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        };
+
+        // Get all textareas
+        const textareas = document.querySelectorAll('textarea');
+        
+        // Add input event listener to each textarea
+        textareas.forEach(textarea => {
+            // Initial adjustment
+            adjustTextareaHeight(textarea);
+            
+            // Add event listener for future changes
+            textarea.addEventListener('input', () => adjustTextareaHeight(textarea));
+        });
+
+        // Cleanup
+        return () => {
+            textareas.forEach(textarea => {
+                textarea.removeEventListener('input', () => adjustTextareaHeight(textarea));
+            });
+        };
+    }, []); // Empty dependency array means this runs once on mount
+
     return (
         <div className="flex flex-col items-center gap-8 max-w-3xl mx-auto">
             <form onSubmit={handleQuestionSubmit} className="w-full space-y-8">
@@ -313,13 +341,19 @@ function Question() {
                         <textarea 
                             required
                             value={formData[question.field] || ''}
-                            onChange={(e) => handleInputChange(question.field, e.target.value)}
+                            onChange={(e) => {
+                                handleInputChange(question.field, e.target.value);
+                                // Adjust height on change
+                                e.target.style.height = 'auto';
+                                e.target.style.height = e.target.scrollHeight + 'px';
+                            }}
                             placeholder='Type your answer here...' 
                             className='w-full border-2 border-gray-200 rounded-lg p-4 
                                     bg-white text-gray-900 placeholder-gray-400 
                                     focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
                                     hover:border-green-500 transition-all duration-300
-                                    shadow-sm hover:shadow-md' 
+                                    shadow-sm hover:shadow-md
+                                    min-h-[100px] overflow-hidden resize-none' // Added these classes
                         />
                     </div>
                 ))}
