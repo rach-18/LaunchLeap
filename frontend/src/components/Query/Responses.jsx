@@ -6,8 +6,9 @@ import Navbar from '../Navbar'
 import Footer from '../Footer'
 import { CircularProgress, Button, Box } from '@mui/material'
 import { ContentCopy } from '@mui/icons-material'
-import ReactMarkdown from 'react-markdown'
 import UserCard from './UserCard'
+import { Link } from 'react-router-dom'
+
 function Responses() {
     const { id } = useParams()
     const [loading, setLoading] = useState(true)
@@ -335,6 +336,66 @@ function Responses() {
                                     })
                                 }
                             </ul>
+                        </div>
+
+                        {/* Add this new CTA section before closing the main container */}
+                        <div className="mt-16 p-6 sm:p-10 border-2 border-gray-200 rounded-lg shadow-lg bg-white w-full">
+                            <div className="space-y-8 text-center">
+                                {/* Hook Question */}
+                                <h2 className="text-xl sm:text-2xl text-gray-600 font-medium">
+                                    Liking what you see?
+                                </h2>
+
+                                {/* Brand Name & Description */}
+                                <div className="space-y-3">
+                                    <h1 className='font-extrabold tracking-tight leading-tight 
+                                        text-2xl sm:text-3xl md:text-4xl
+                                        text-gray-900'>
+                                        🚀 LAUNCHLEAP
+                                    </h1>
+                                    <p className='text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto'>
+                                        Your growth co-pilot, powered by the world's largest repository of decoded startup success patterns and proven playbooks.
+                                    </p>
+                                </div>
+
+                                {/* Tagline */}
+                                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+                                    Stop guessing. Start growing.
+                                </h3>
+
+                                {/* Features List */}
+                                <div className="max-w-xl mx-auto text-left space-y-3">
+                                    {[
+                                        "Custom growth roadmap with proven strategies for your startup",
+                                        "AI generates your marketing content - social, emails, ads & more",
+                                        "Track traction in real-time & get optimization insights",
+                                        "Execute data-backed experiments that actually work"
+                                    ].map((feature, index) => (
+                                        <div key={index} className="flex items-start gap-2 text-gray-700">
+                                            <span className="text-green-500 mt-1 flex-shrink-0">✓</span>
+                                            <p className="text-sm sm:text-base">{feature}</p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Social Proof & Urgency */}
+                                <div className="space-y-2 text-gray-600">
+                                    <p className="text-sm sm:text-base">→ Join 500+ founders gaining unfair advantages with LaunchLeap</p>
+                                    <p className="text-sm sm:text-base font-medium">→ Limited early access spots available</p>
+                                </div>
+
+                                {/* CTA Button */}
+                                <div>
+                                    <Link 
+                                        to="/signup"
+                                        className="bg-[#B8FF33] hover:bg-[#a5e82d] text-black font-semibold 
+                                            py-3 px-8 rounded-full text-base sm:text-lg transition-colors
+                                            shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
+                                    >
+                                        Sign Up to Request Early Access Now
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
 
                         {/* <UserCard field="Start Up Idea" value={responseData.formData.startUpIdea} type="idea" /> */}
