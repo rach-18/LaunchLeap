@@ -389,7 +389,7 @@ function Responses() {
                                     <Link 
                                         to="/signup"
                                         className="bg-[#B8FF33] hover:bg-[#a5e82d] text-black font-semibold 
-                                            py-3 px-8 rounded-full text-base sm:text-lg transition-colors
+                                            py-3 px-8 rounded-full text-sm sm:text-lg transition-colors
                                             shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
                                     >
                                         Sign Up to Request Early Access Now
